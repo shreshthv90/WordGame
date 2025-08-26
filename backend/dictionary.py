@@ -71,12 +71,34 @@ THREE_LETTER_WORDS = {
     'YIN', 'YIP', 'YOU', 'YOW', 'YUK', 'ZAG', 'ZAP', 'ZED', 'ZEE', 'ZEN', 'ZIG', 'ZIP', 'ZIT', 'ZOO'
 }
 
-# For now, I'll implement a fallback validation that accepts most reasonable combinations
-# This is a temporary solution until we can implement a proper comprehensive dictionary
+def is_valid_word(word: str, word_length: int = None) -> bool:
+    """
+    Comprehensive word validation combining dictionary lookup with intelligent heuristics.
+    This approach is more permissive to avoid rejecting valid but uncommon words.
+    """
+    word_upper = word.upper().strip()
+    
+    # Basic validation
+    if not word_upper or not word_upper.isalpha():
+        return False
+    
+    if word_length and len(word_upper) != word_length:
+        return False
+    
+    if len(word_upper) < 3 or len(word_upper) > 6:
+        return False
+    
+    # First, check if it's in our known dictionary
+    if word_upper in get_words_by_length(len(word_upper)):
+        return True
+    
+    # If not in dictionary, apply intelligent heuristics for likely valid words
+    return is_reasonable_word(word_upper)
+
 def is_reasonable_word(word: str) -> bool:
     """
-    Basic heuristic to determine if a word looks reasonable.
-    This is a fallback for comprehensive word validation.
+    Enhanced heuristic validation for words not in our base dictionary.
+    This is more permissive to avoid frustrating rejections of valid words.
     """
     word = word.upper().strip()
     
@@ -88,22 +110,39 @@ def is_reasonable_word(word: str) -> bool:
     if not word.isalpha():
         return False
     
-    # Some basic patterns that are likely not words
-    invalid_patterns = [
-        # All same letter (except some like AAA might be valid in some contexts)
-        lambda w: len(set(w)) == 1 and len(w) > 2,
-        # Too many repeated letters
-        lambda w: any(w.count(c) > len(w) - 1 for c in set(w) if w.count(c) > 2),
-        # No vowels in longer words (except some Welsh words, etc.)
-        lambda w: len(w) >= 4 and not any(c in 'AEIOUY' for c in w),
-        # Too many consonants in a row
-        lambda w: any(all(c not in 'AEIOUY' for c in w[i:i+4]) for i in range(len(w)-3)),
-    ]
+    # Reject obvious non-words
     
-    for pattern in invalid_patterns:
-        if pattern(word):
+    # All same letter (like AAA, BBB) - usually not words
+    if len(set(word)) == 1:
+        return False
+    
+    # No vowels at all in 4+ letter words (very rare in English)
+    vowels = set('AEIOUY')
+    if len(word) >= 4 and not any(c in vowels for c in word):
+        # Some exceptions like "HYMN", "MYTH", etc. - but we'll be conservative
+        consonant_only_exceptions = {'HYMN', 'MYTH', 'LYNX', 'SYNC', 'BYRL', 'CWMS', 'CRWTH'}
+        if word not in consonant_only_exceptions:
             return False
     
+    # Too many of the same letter (more than half the word)
+    for letter in set(word):
+        if word.count(letter) > len(word) // 2 + 1:
+            return False
+    
+    # Check for reasonable letter patterns
+    # Reject words with too many consonants in a row (more than 3)
+    consonants = set('BCDFGHJKLMNPQRSTVWXZ')
+    consonant_run = 0
+    for c in word:
+        if c in consonants:
+            consonant_run += 1
+            if consonant_run > 3:  # Allow some consonant clusters like "STRNG"
+                return False
+        else:
+            consonant_run = 0
+    
+    # If it passes all these checks, it's likely a valid word
+    # This is more permissive to avoid rejecting valid but uncommon words
     return True
 
 # 4-letter words (1000+ words)
