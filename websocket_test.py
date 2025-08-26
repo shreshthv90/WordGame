@@ -16,7 +16,7 @@ class WebSocketTester:
         print(f"\n🔍 Testing WebSocket connection to: {ws_url}")
         
         try:
-            async with websockets.connect(ws_url, timeout=10) as websocket:
+            async with websockets.connect(ws_url) as websocket:
                 print("✅ WebSocket connection established")
                 
                 # Test joining the game
@@ -63,7 +63,7 @@ class WebSocketTester:
         print(f"\n🎮 Testing complete game flow...")
         
         try:
-            async with websockets.connect(ws_url, timeout=10) as websocket:
+            async with websockets.connect(ws_url) as websocket:
                 # Join game
                 await websocket.send(json.dumps({
                     "type": "join",
