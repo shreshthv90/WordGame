@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import './App.css';
 import { Button } from './components/ui/button';
 import { Input } from './components/ui/input';
@@ -10,6 +10,7 @@ import axios from 'axios';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
+const WS_URL = BACKEND_URL.replace('https://', 'wss://').replace('http://', 'ws://');
 
 function App() {
   const [gameState, setGameState] = useState('menu'); // 'menu', 'lobby', 'playing'
@@ -23,8 +24,104 @@ function App() {
   const [gameStarted, setGameStarted] = useState(false);
   const [connectionStatus, setConnectionStatus] = useState('disconnected');
   
+  const wsRef = useRef(null);
+
   const addMessage = (text) => {
     setMessages(prev => [...prev, { text, timestamp: Date.now() }].slice(-10));
+  };
+
+  const connectWebSocket = useCallback((code) => {
+    const wsUrl = `${WS_URL}/api/ws/${code}`;
+    console.log('Connecting to WebSocket:', wsUrl);
+    
+    const ws = new WebSocket(wsUrl);
+    
+    ws.onopen = () => {
+      setConnectionStatus('connected');
+      console.log('Connected to WebSocket');
+      addMessage('Connected to game server!');
+    };
+    
+    ws.onmessage = (event) => {
+      try {
+        const message = JSON.parse(event.data);
+        handleWebSocketMessage(message);
+      } catch (error) {
+        console.error('Error parsing WebSocket message:', error);
+      }
+    };
+    
+    ws.onclose = () => {
+      setConnectionStatus('disconnected');
+      console.log('WebSocket connection closed');
+      addMessage('Disconnected from game server');
+    };
+    
+    ws.onerror = (error) => {
+      console.error('WebSocket error:', error);
+      setConnectionStatus('error');
+      addMessage('Connection error occurred');
+    };
+    
+    wsRef.current = ws;
+  }, []);
+
+  const handleWebSocketMessage = (message) => {
+    console.log('Received message:', message);
+    
+    switch (message.type) {
+      case 'player_joined':
+        setPlayers(message.players);
+        addMessage(`${message.player_name} joined the game`);
+        break;
+        
+      case 'player_left':
+        setPlayers(message.players);
+        addMessage(`${message.player_name} left the game`);
+        break;
+        
+      case 'game_state':
+        setLettersOnTable(message.letters);
+        setPlayers(message.players);
+        setGameStarted(message.game_started);
+        break;
+        
+      case 'game_started':
+        setGameStarted(true);
+        setGameState('playing');
+        addMessage('Game started! Letters will appear every 4 seconds.');
+        break;
+        
+      case 'new_letter':
+        setLettersOnTable(message.letters);
+        addMessage(`New letter appeared: ${message.letter}`);
+        break;
+        
+      case 'word_accepted':
+        setPlayers(message.players);
+        setLettersOnTable(message.letters);
+        setSelectedLetters([]);
+        setCurrentWord('');
+        addMessage(`${message.player} scored ${message.score} points with "${message.word}"!`);
+        break;
+        
+      case 'word_rejected':
+        addMessage(`Word "${message.word}" was rejected: ${message.reason}`);
+        setSelectedLetters([]);
+        setCurrentWord('');
+        break;
+        
+      case 'game_ended':
+        setGameStarted(false);
+        const winner = message.final_scores.reduce((prev, current) => 
+          prev.score > current.score ? prev : current
+        );
+        addMessage(`Game ended! Winner: ${winner.name} with ${winner.score} points!`);
+        break;
+        
+      default:
+        console.log('Unknown message type:', message.type);
+    }
   };
 
   const createRoom = async () => {
@@ -33,9 +130,9 @@ function App() {
       const data = response.data;
       setRoomCode(data.room_code);
       setGameState('lobby');
-      setConnectionStatus('connected');
       
-      setPlayers([{ name: playerName, score: 0 }]);
+      // Connect to WebSocket
+      connectWebSocket(data.room_code);
       addMessage('Room created successfully!');
     } catch (error) {
       console.error('Error creating room:', error);
@@ -46,43 +143,26 @@ function App() {
   const joinRoom = () => {
     if (roomCode && playerName) {
       setGameState('lobby');
-      setConnectionStatus('connected');
-      setPlayers([{ name: playerName, score: 0 }]);
-      addMessage('Joined room successfully!');
+      connectWebSocket(roomCode);
+    }
+  };
+
+  const joinGame = () => {
+    if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN && playerName) {
+      wsRef.current.send(JSON.stringify({
+        type: 'join',
+        player_name: playerName
+      }));
     }
   };
 
   const startGame = () => {
-    setGameStarted(true);
-    setGameState('playing');
-    addMessage('Game started! Letters will appear every 4 seconds.');
-    
-    // Start adding letters for demo
-    addLettersToTable();
-  };
-
-  const addLettersToTable = () => {
-    const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
-    const randomLetter = letters[Math.floor(Math.random() * letters.length)];
-    const newLetter = {
-      id: Date.now().toString(),
-      letter: randomLetter,
-      timestamp: Date.now()
-    };
-    
-    setLettersOnTable(prev => [...prev, newLetter]);
-  };
-
-  // Add letters every 4 seconds when game is playing
-  useEffect(() => {
-    let interval;
-    if (gameStarted && gameState === 'playing') {
-      interval = setInterval(() => {
-        addLettersToTable();
-      }, 4000);
+    if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+      wsRef.current.send(JSON.stringify({
+        type: 'start_game'
+      }));
     }
-    return () => clearInterval(interval);
-  }, [gameStarted, gameState]);
+  };
 
   const selectLetter = (letterId, letter) => {
     if (selectedLetters.find(l => l.id === letterId)) {
@@ -102,23 +182,12 @@ function App() {
   };
 
   const submitWord = () => {
-    if (currentWord.length >= 3) {
-      // Simple word validation (you can expand this)
-      const score = currentWord.length * 2; // Simple scoring
-      
-      // Remove selected letters from table
-      setLettersOnTable(prev => 
-        prev.filter(l => !selectedLetters.some(sel => sel.id === l.id))
-      );
-      
-      setSelectedLetters([]);
-      setCurrentWord('');
-      addMessage(`You scored ${score} points with "${currentWord.toUpperCase()}"!`);
-      
-      // Update players
-      setPlayers(prev => 
-        prev.map(p => p.name === playerName ? { ...p, score: p.score + score } : p)
-      );
+    if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN && currentWord.length >= 3) {
+      wsRef.current.send(JSON.stringify({
+        type: 'submit_word',
+        word: currentWord,
+        selected_letter_ids: selectedLetters.map(l => l.id)
+      }));
     }
   };
 
@@ -126,6 +195,25 @@ function App() {
     setSelectedLetters([]);
     setCurrentWord('');
   };
+
+  // Auto-join game when entering lobby
+  useEffect(() => {
+    if (gameState === 'lobby' && wsRef.current && playerName && connectionStatus === 'connected') {
+      const timer = setTimeout(() => {
+        joinGame();
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [gameState, playerName, connectionStatus]);
+
+  // Cleanup WebSocket on unmount
+  useEffect(() => {
+    return () => {
+      if (wsRef.current) {
+        wsRef.current.close();
+      }
+    };
+  }, []);
 
   if (gameState === 'menu') {
     return (
