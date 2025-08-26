@@ -188,7 +188,7 @@ function App() {
   };
 
   const submitWord = () => {
-    if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN && currentWord.length >= 3) {
+    if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN && currentWord.length === gameWordLength) {
       wsRef.current.send(JSON.stringify({
         type: 'submit_word',
         word: currentWord,
