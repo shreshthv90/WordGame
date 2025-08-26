@@ -1,34 +1,241 @@
-.App-logo {
-    height: 40vmin;
-    pointer-events: none;
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-    .App-logo {
-        animation: App-logo-spin infinite 20s linear;
-    }
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: linear-gradient(135deg, #fef7cd 0%, #fed7aa 50%, #fecaca 100%);
+  min-height: 100vh;
 }
 
-.App-header {
-    background-color: #0f0f10;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(10px + 2vmin);
-    color: white;
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
 }
 
-.App-link {
-    color: #61dafb;
+.App {
+  min-height: 100vh;
 }
 
-@keyframes App-logo-spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a1a1a1;
+}
+
+/* Animation for new letters appearing */
+@keyframes letterAppear {
+  0% {
+    transform: scale(0) rotate(180deg);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.1) rotate(90deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+.letter-tile {
+  animation: letterAppear 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Hover effects */
+.letter-tile:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.letter-tile.selected {
+  transform: translateY(-4px) scale(0.95);
+  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.3);
+}
+
+/* Word submission animation */
+@keyframes wordSubmit {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.word-submit {
+  animation: wordSubmit 0.3s ease-in-out;
+}
+
+/* Score popup animation */
+@keyframes scorePopup {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(-20px) scale(1.2);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(-40px) scale(1);
+    opacity: 0;
+  }
+}
+
+.score-popup {
+  animation: scorePopup 1.5s ease-out forwards;
+}
+
+/* Responsive design */
+@media (max-width: 640px) {
+  .letter-grid {
+    grid-template-columns: repeat(6, 1fr);
+    gap: 8px;
+  }
+  
+  .letter-tile {
+    font-size: 14px;
+    min-height: 40px;
+  }
+}
+
+@media (max-width: 480px) {
+  .letter-grid {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+  }
+}
+
+/* Loading states */
+.loading-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Connection status indicator */
+.connection-indicator {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
+.connection-indicator.connected {
+  color: #10b981;
+}
+
+.connection-indicator.disconnected {
+  color: #ef4444;
+  animation: pulse 1s infinite;
+}
+
+/* Game messages styling */
+.game-message {
+  padding: 8px 12px;
+  border-radius: 8px;
+  margin-bottom: 4px;
+  border-left: 4px solid transparent;
+}
+
+.game-message.success {
+  background: #ecfdf5;
+  border-left-color: #10b981;
+  color: #065f46;
+}
+
+.game-message.error {
+  background: #fef2f2;
+  border-left-color: #ef4444;
+  color: #991b1b;
+}
+
+.game-message.info {
+  background: #eff6ff;
+  border-left-color: #3b82f6;
+  color: #1e40af;
+}
+
+/* Letter score indicators */
+.letter-score {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  font-size: 8px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 2px;
+  padding: 1px 3px;
+  font-weight: 600;
+}
+
+/* Word formation area enhancements */
+.word-formation {
+  background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+  border: 2px dashed #e2e8f0;
+  border-radius: 12px;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  transition: all 0.3s ease;
+}
+
+.word-formation.has-letters {
+  border-color: #f59e0b;
+  background: linear-gradient(145deg, #fef3c7 0%, #fbbf24 100%);
+  color: #92400e;
+}
+
+.word-formation.empty {
+  color: #94a3b8;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+/* Player list enhancements */
+.player-card {
+  background: linear-gradient(145deg, #ffffff 0%, #f1f5f9 100%);
+  border-radius: 12px;
+  padding: 12px;
+  border: 1px solid #e2e8f0;
+  transition: all 0.3s ease;
+}
+
+.player-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.player-card.current-player {
+  border-color: #f59e0b;
+  background: linear-gradient(145deg, #fef3c7 0%, #fde68a 100%);
 }
