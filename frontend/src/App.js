@@ -16,6 +16,8 @@ function App() {
   const [gameState, setGameState] = useState('menu'); // 'menu', 'lobby', 'playing'
   const [roomCode, setRoomCode] = useState('');
   const [playerName, setPlayerName] = useState('');
+  const [selectedWordLength, setSelectedWordLength] = useState(3); // New: word length setting
+  const [gameWordLength, setGameWordLength] = useState(3); // Current game's word length requirement
   const [players, setPlayers] = useState([]);
   const [lettersOnTable, setLettersOnTable] = useState([]);
   const [selectedLetters, setSelectedLetters] = useState([]);
