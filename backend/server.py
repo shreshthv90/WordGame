@@ -14,6 +14,7 @@ from pydantic import BaseModel, Field
 from typing import List, Dict, Set, Optional
 import uuid
 from datetime import datetime, timezone
+from dictionary import is_valid_word, get_words_by_length, ALL_WORDS
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
