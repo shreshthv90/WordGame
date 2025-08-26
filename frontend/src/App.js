@@ -26,7 +26,9 @@ function App() {
   const wsRef = useRef(null);
 
   const connectWebSocket = useCallback((code) => {
-    const ws = new WebSocket(`${WS_URL}/ws/${code}`);
+    const wsUrl = `${WS_URL}/api/ws/${code}`;
+    console.log('Connecting to WebSocket:', wsUrl);
+    const ws = new WebSocket(wsUrl);
     
     ws.onopen = () => {
       setIsConnected(true);
