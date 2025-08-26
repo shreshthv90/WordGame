@@ -276,7 +276,8 @@ async def websocket_endpoint(websocket: WebSocket, room_code: str):
                     "type": "game_state",
                     "letters": game.letters_on_table,
                     "players": list(game.players.values()),
-                    "game_started": game.game_started
+                    "game_started": game.game_started,
+                    "word_length": game.word_length
                 }))
                 
             elif message["type"] == "start_game":
