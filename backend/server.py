@@ -219,6 +219,9 @@ class ConnectionManager:
 manager = ConnectionManager()
 
 # Models
+class CreateRoomRequest(BaseModel):
+    word_length: int = Field(default=3, ge=3, le=6)
+
 class JoinRoomRequest(BaseModel):
     room_code: str
     player_name: str
