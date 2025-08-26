@@ -86,6 +86,7 @@ function App() {
         setLettersOnTable(message.letters);
         setPlayers(message.players);
         setGameStarted(message.game_started);
+        setGameWordLength(message.word_length || 3); // Set game's word length requirement
         break;
         
       case 'game_started':
