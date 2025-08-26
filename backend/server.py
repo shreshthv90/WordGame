@@ -181,7 +181,7 @@ async def create_room():
     return {"room_code": room_code}
 
 # WebSocket endpoint
-@app.websocket("/ws/{room_code}")
+@api_router.websocket("/ws/{room_code}")
 async def websocket_endpoint(websocket: WebSocket, room_code: str):
     await manager.connect(websocket, room_code)
     
