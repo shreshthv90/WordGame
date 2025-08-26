@@ -164,7 +164,7 @@ class GameState:
     def can_form_word(self, selected_letters: List[str], word: str) -> bool:
         if len(word) != self.word_length:  # Must be exactly the required length
             return False
-        if word.upper() not in VALID_WORDS:
+        if not is_valid_word(word, self.word_length):  # Use comprehensive dictionary
             return False
         
         word_letters = list(word.upper())
