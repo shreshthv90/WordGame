@@ -224,9 +224,10 @@ function App() {
               <Zap className="h-8 w-8 text-white" />
             </div>
             <CardTitle className="text-3xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">
-              WordSmith
+              Nikki's Word Rush
             </CardTitle>
             <p className="text-gray-600 text-sm">Multiplayer Word Racing Game</p>
+            <p className="text-xs text-gray-500 mt-1">Form words with 3-6 letters to score points!</p>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="space-y-3">
