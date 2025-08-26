@@ -125,7 +125,7 @@ class WebSocketTester:
         print(f"\n📝 Testing word submission...")
         
         try:
-            async with websockets.connect(ws_url, timeout=10) as websocket:
+            async with websockets.connect(ws_url) as websocket:
                 # Join and start game
                 await websocket.send(json.dumps({
                     "type": "join",
