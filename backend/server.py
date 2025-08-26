@@ -180,8 +180,8 @@ async def create_room():
     games[room_code] = GameState(room_code)
     return {"room_code": room_code}
 
-# WebSocket endpoint
-@api_router.websocket("/ws/{room_code}")
+# WebSocket endpoint (must be on main app, not router)
+@app.websocket("/api/ws/{room_code}")
 async def websocket_endpoint(websocket: WebSocket, room_code: str):
     await manager.connect(websocket, room_code)
     
