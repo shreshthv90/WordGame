@@ -161,7 +161,7 @@ class GameState:
         return None
 
     def can_form_word(self, selected_letters: List[str], word: str) -> bool:
-        if len(word) < 3 or len(word) > 6:
+        if len(word) != self.word_length:  # Must be exactly the required length
             return False
         if word.upper() not in VALID_WORDS:
             return False
