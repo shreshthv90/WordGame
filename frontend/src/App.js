@@ -243,6 +243,27 @@ function App() {
                 onChange={(e) => setPlayerName(e.target.value)}
                 className="text-center text-lg font-medium border-2 border-gray-200 focus:border-amber-400"
               />
+              
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">Word Length for Game:</label>
+                <div className="grid grid-cols-4 gap-2">
+                  {[3, 4, 5, 6].map(length => (
+                    <Button
+                      key={length}
+                      variant={selectedWordLength === length ? "default" : "outline"}
+                      onClick={() => setSelectedWordLength(length)}
+                      className={`text-sm ${selectedWordLength === length ? 
+                        'bg-amber-500 hover:bg-amber-600 text-white' : 
+                        'border-amber-300 text-amber-600 hover:bg-amber-50'}`}
+                    >
+                      {length} Letters
+                    </Button>
+                  ))}
+                </div>
+                <p className="text-xs text-gray-500 text-center">
+                  All words in this game must be exactly {selectedWordLength} letters long
+                </p>
+              </div>
             </div>
             
             <div className="space-y-3">
