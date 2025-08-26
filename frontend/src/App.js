@@ -444,12 +444,12 @@ function App() {
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
                 <div className="flex-1">
-                  <div className="text-sm text-gray-600 mb-1">Current Word (Need 3-6 letters):</div>
+                  <div className="text-sm text-gray-600 mb-1">Current Word (Need exactly {gameWordLength} letters):</div>
                   <div className="text-2xl font-bold font-mono bg-gray-50 p-3 rounded-lg min-h-[3rem] flex items-center">
-                    {currentWord || 'Select letters to form a word...'}
+                    {currentWord || `Select ${gameWordLength} letters to form a word...`}
                   </div>
                   <div className="text-xs text-gray-500 mt-1">
-                    {currentWord ? `${currentWord.length} letters selected` : 'Minimum 3 letters required'}
+                    {currentWord ? `${currentWord.length}/${gameWordLength} letters selected` : `Need exactly ${gameWordLength} letters`}
                   </div>
                 </div>
                 <div className="space-x-2">
