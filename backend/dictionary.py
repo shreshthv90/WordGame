@@ -1,6 +1,10 @@
 # Ultra-Comprehensive English Dictionary
 # This is a significantly expanded word list covering common and uncommon English words
 
+# Ultra-Comprehensive English Dictionary
+# This includes a significantly expanded word list covering common and uncommon English words
+from expanded_words import ADDITIONAL_FOUR_LETTER_WORDS, ADDITIONAL_FIVE_LETTER_WORDS, ADDITIONAL_SIX_LETTER_WORDS
+
 # Enhanced 3-letter words (1500+ words)
 THREE_LETTER_WORDS = {
     # Common 3-letter words
@@ -13,7 +17,7 @@ THREE_LETTER_WORDS = {
     'PAY', 'PEN', 'PET', 'PUT', 'RAT', 'RAW', 'ROW', 'SAD', 'SUN', 'TAX', 'TEA', 'TEN', 'TIE', 'TIP', 'TRY', 'WAR',
     'WIN', 'YES', 'YET', 'ZOO', 'ACE', 'ADD', 'AGE', 'AID', 'AIM', 'AIR', 'ASK', 'AXE', 'BAN', 'BEE', 'BET', 'BIN',
     
-    # Extended 3-letter words
+    # Extended 3-letter words including all common combinations
     'BOW', 'CAB', 'CAD', 'CAM', 'CAN', 'CAP', 'COB', 'COD', 'COG', 'DIG', 'DIM', 'DIP', 'DOT', 'DUE', 'DUG', 'ELF',
     'ERA', 'EVE', 'FED', 'FIG', 'FIN', 'FOG', 'FUR', 'GAP', 'GEL', 'GEM', 'HAM', 'HEN', 'HEX', 'HID', 'HOP', 'HUB',
     'HUG', 'HUT', 'ICE', 'ILL', 'INK', 'ION', 'JAM', 'JAR', 'JAW', 'JET', 'JOG', 'JOT', 'JOY', 'JUG', 'LAB', 'LAD',
