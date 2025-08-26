@@ -436,7 +436,7 @@ function App() {
                     className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 px-6"
                     disabled={currentWord.length < 3}
                   >
-                    Submit Word
+                    Submit Word {currentWord.length >= 3 ? '✓' : `(${3 - currentWord.length} more)`}
                   </Button>
                 </div>
               </div>
