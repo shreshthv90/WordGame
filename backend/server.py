@@ -302,7 +302,9 @@ async def websocket_endpoint(websocket: WebSocket, room_code: str):
                     "letters": game.letters_on_table,
                     "players": list(game.players.values()),
                     "game_started": game.game_started,
-                    "word_length": game.word_length
+                    "word_length": game.word_length,
+                    "timer_minutes": game.timer_minutes,
+                    "time_remaining": game.get_time_remaining()
                 }))
                 
             elif message["type"] == "start_game":
