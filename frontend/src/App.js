@@ -292,6 +292,27 @@ function App() {
                   All words in this game must be exactly {selectedWordLength} letters long
                 </p>
               </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">Game Timer:</label>
+                <div className="grid grid-cols-3 gap-2">
+                  {[2, 4, 6].map(minutes => (
+                    <Button
+                      key={minutes}
+                      variant={selectedTimerMinutes === minutes ? "default" : "outline"}
+                      onClick={() => setSelectedTimerMinutes(minutes)}
+                      className={`text-sm ${selectedTimerMinutes === minutes ? 
+                        'bg-blue-500 hover:bg-blue-600 text-white' : 
+                        'border-blue-300 text-blue-600 hover:bg-blue-50'}`}
+                    >
+                      {minutes} Min
+                    </Button>
+                  ))}
+                </div>
+                <p className="text-xs text-gray-500 text-center">
+                  Game will end after {selectedTimerMinutes} minutes
+                </p>
+              </div>
             </div>
             
             <div className="space-y-3">
