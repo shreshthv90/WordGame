@@ -63,6 +63,132 @@ class GameHistoryEntry(BaseModel):
 app = FastAPI()
 api_router = APIRouter(prefix="/api")
 
+# Authentication Functions
+async def verify_session_token(session_token: Optional[str] = Cookie(None)) -> Optional[User]:
+    """Verify session token and return user data"""
+    if not session_token:
+        return None
+    
+    # Check if session exists and is valid
+    session = await sessions_collection.find_one({
+        "session_token": session_token,
+        "expires_at": {"$gt": datetime.utcnow()}
+    })
+    
+    if not session:
+        return None
+    
+    # Get user data
+    user = await users_collection.find_one({"id": session["user_id"]})
+    if not user:
+        return None
+    
+    return User(**user)
+
+async def get_current_user(session_token: Optional[str] = Cookie(None)) -> User:
+    """Get current authenticated user (raises exception if not authenticated)"""
+    user = await verify_session_token(session_token)
+    if not user:
+        raise HTTPException(status_code=401, detail="Authentication required")
+    return user
+
+async def get_optional_user(session_token: Optional[str] = Cookie(None)) -> Optional[User]:
+    """Get current user if authenticated, None otherwise"""
+    return await verify_session_token(session_token)
+
+def calculate_elo_change(winner_elo: int, loser_elo: int, k_factor: int = 32) -> tuple[int, int]:
+    """Calculate ELO rating changes for winner and loser"""
+    expected_score_winner = 1 / (1 + 10**((loser_elo - winner_elo) / 400))
+    expected_score_loser = 1 - expected_score_winner
+    
+    winner_change = round(k_factor * (1 - expected_score_winner))
+    loser_change = round(k_factor * (0 - expected_score_loser))
+    
+    return winner_change, loser_change
+
+# Authentication API Routes
+@api_router.post("/auth/profile")
+async def create_profile(session_id: str, response: Response):
+    """Handle profile creation after OAuth redirect"""
+    try:
+        # Call Emergent auth API to get user data
+        headers = {"X-Session-ID": session_id}
+        auth_response = requests.get(
+            "https://demobackend.emergentagent.com/auth/v1/env/oauth/session-data",
+            headers=headers
+        )
+        
+        if auth_response.status_code != 200:
+            raise HTTPException(status_code=401, detail="Invalid session")
+        
+        user_data = auth_response.json()
+        
+        # Check if user already exists
+        existing_user = await users_collection.find_one({"email": user_data["email"]})
+        
+        if not existing_user:
+            # Create new user
+            new_user = {
+                "id": user_data["id"],
+                "email": user_data["email"],
+                "name": user_data["name"],
+                "picture": user_data["picture"],
+                "created_at": datetime.utcnow(),
+                "total_games": 0,
+                "total_wins": 0,
+                "total_score": 0,
+                "elo_rating": 1000
+            }
+            await users_collection.insert_one(new_user)
+            user_id = user_data["id"]
+        else:
+            user_id = existing_user["id"]
+        
+        # Create session
+        session_token = user_data["session_token"]
+        session_data = {
+            "session_token": session_token,
+            "user_id": user_id,
+            "expires_at": datetime.utcnow() + timedelta(days=7),
+            "created_at": datetime.utcnow()
+        }
+        
+        # Remove old sessions for this user
+        await sessions_collection.delete_many({"user_id": user_id})
+        
+        # Insert new session
+        await sessions_collection.insert_one(session_data)
+        
+        # Set secure cookie
+        response.set_cookie(
+            key="session_token",
+            value=session_token,
+            max_age=7 * 24 * 60 * 60,  # 7 days
+            httponly=True,
+            secure=True,
+            samesite="none",
+            path="/"
+        )
+        
+        return {"success": True, "user": new_user if not existing_user else existing_user}
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Authentication failed: {str(e)}")
+
+@api_router.get("/auth/me")
+async def get_me(current_user: User = Depends(get_current_user)):
+    """Get current user profile"""
+    return current_user
+
+@api_router.post("/auth/logout")
+async def logout(response: Response, session_token: Optional[str] = Cookie(None)):
+    """Logout user by invalidating session"""
+    if session_token:
+        await sessions_collection.delete_one({"session_token": session_token})
+    
+    response.delete_cookie(key="session_token", path="/")
+    return {"success": True}
+
 # Scrabble tile distribution
 SCRABBLE_TILES = {
     'A': 9, 'B': 2, 'C': 2, 'D': 4, 'E': 12, 'F': 2, 'G': 3, 'H': 2,
