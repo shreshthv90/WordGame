@@ -310,11 +310,16 @@ async def websocket_endpoint(websocket: WebSocket, room_code: str):
             elif message["type"] == "start_game":
                 if not game.game_started:
                     game.game_started = True
+                    game.game_start_time = time.time()  # Record when game actually started
                     # Start letter generation timer
                     asyncio.create_task(letter_generation_timer(room_code))
+                    # Start game timer countdown
+                    asyncio.create_task(game_timer_countdown(room_code))
                     
                     await manager.broadcast_to_room({
-                        "type": "game_started"
+                        "type": "game_started",
+                        "timer_minutes": game.timer_minutes,
+                        "time_remaining": game.get_time_remaining()
                     }, room_code)
                     
             elif message["type"] == "submit_word":
