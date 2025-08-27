@@ -199,7 +199,7 @@ async def main():
     # Create room first using HTTP API
     import requests
     try:
-        response = requests.post("https://wordsmith-24.preview.emergentagent.com/api/create-room", timeout=10)
+        response = requests.post("https://wordplay-hub-2.preview.emergentagent.com/api/create-room", timeout=10)
         room_data = response.json()
         room_code = room_data['room_code']
         print(f"✅ Created test room: {room_code}")
