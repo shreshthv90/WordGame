@@ -35,6 +35,12 @@ function App() {
     setMessages(prev => [...prev, { text, timestamp: Date.now() }].slice(-10));
   };
 
+  const formatTime = (seconds) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+  };
+
   const connectWebSocket = useCallback((code) => {
     const wsUrl = `${WS_URL}/api/ws/${code}`;
     console.log('Connecting to WebSocket:', wsUrl);
