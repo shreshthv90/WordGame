@@ -21,6 +21,9 @@ function App() {
   const [gameWordLength, setGameWordLength] = useState(3); // Current game's word length requirement
   const [gameTimerMinutes, setGameTimerMinutes] = useState(4); // Current game's timer setting
   const [timeRemaining, setTimeRemaining] = useState(0); // Time remaining in seconds
+  const [showRules, setShowRules] = useState(false); // Show/hide rules section
+  const [showSuccessAnimation, setShowSuccessAnimation] = useState(false); // Success animation state
+  const [successWord, setSuccessWord] = useState(''); // Word that was accepted
   const [players, setPlayers] = useState([]);
   const [lettersOnTable, setLettersOnTable] = useState([]);
   const [selectedLetters, setSelectedLetters] = useState([]);
