@@ -393,6 +393,101 @@ class GameState:
 
     def calculate_word_score(self, word: str) -> int:
         return sum(SCRABBLE_SCORES[letter.upper()] for letter in word)
+    
+    async def end_game_and_update_stats(self):
+        """End game and update player statistics and ELO ratings"""
+        if self.game_ended:
+            return
+            
+        self.game_ended = True
+        
+        # Sort players by score
+        sorted_players = sorted(
+            [(ws_id, player) for ws_id, player in self.players.items()],
+            key=lambda x: x[1]["score"],
+            reverse=True
+        )
+        
+        # Update stats for logged-in players only
+        authenticated_players = [
+            (ws_id, player) for ws_id, player in sorted_players 
+            if player.get("user") is not None
+        ]
+        
+        if len(authenticated_players) < 2:
+            # Not enough authenticated players for ELO changes
+            return
+        
+        # Calculate ELO changes for top 2 players
+        if len(authenticated_players) >= 2:
+            winner_data = authenticated_players[0][1]
+            loser_data = authenticated_players[1][1]
+            
+            winner_user = winner_data["user"]
+            loser_user = loser_data["user"]
+            
+            # Calculate ELO changes
+            winner_change, loser_change = calculate_elo_change(
+                winner_user.elo_rating, 
+                loser_user.elo_rating
+            )
+            
+            # Update ELO ratings in database
+            await users_collection.update_one(
+                {"id": winner_user.id},
+                {
+                    "$inc": {
+                        "total_games": 1,
+                        "total_wins": 1,
+                        "total_score": winner_data["score"],
+                        "elo_rating": winner_change
+                    }
+                }
+            )
+            
+            await users_collection.update_one(
+                {"id": loser_user.id},
+                {
+                    "$inc": {
+                        "total_games": 1,
+                        "total_score": loser_data["score"],
+                        "elo_rating": loser_change
+                    }
+                }
+            )
+        
+        # Save game history for all authenticated players
+        for i, (ws_id, player) in enumerate(authenticated_players):
+            user = player["user"]
+            placement = i + 1
+            
+            # Calculate ELO change for this specific player
+            if i == 0 and len(authenticated_players) >= 2:  # Winner
+                elo_change = winner_change
+                new_elo = winner_user.elo_rating + winner_change
+            elif i == 1 and len(authenticated_players) >= 2:  # Runner-up (loser in 1v1)
+                elo_change = loser_change
+                new_elo = loser_user.elo_rating + loser_change
+            else:  # Other players - smaller ELO changes
+                elo_change = 0  # No change for 3rd+ place or insufficient players
+                new_elo = user.elo_rating
+            
+            # Create game history entry
+            history_entry = {
+                "game_id": self.game_id,
+                "user_id": user.id,
+                "room_code": self.room_code,
+                "final_score": player["score"],
+                "placement": placement,
+                "word_length": self.word_length,
+                "timer_minutes": self.timer_minutes,
+                "opponent_count": len(authenticated_players) - 1,
+                "elo_change": elo_change,
+                "new_elo_rating": new_elo,
+                "played_at": datetime.utcnow()
+            }
+            
+            await game_history_collection.insert_one(history_entry)
 
     def should_end_game(self) -> bool:
         # Game ends if deck is empty, 26 letters on table with 26 seconds timeout, or timer expires
