@@ -135,6 +135,66 @@ backend:
         - agent: "testing"
         - comment: "COMPREHENSIVE TIMER TESTING COMPLETED: Timer functionality is working excellently! ✅ Timer Room Creation (2,4,6 minutes) - all timer options work correctly. ✅ Timer Game State - rooms include timer_minutes and time_remaining fields. ✅ Timer WebSocket - proper URL formatting and timer_update message broadcasting. ✅ Existing Functionality - all previous features work with new timer integration. ✅ API Validation - Pydantic validation properly enforces 2-6 minute range with 422 errors for invalid values, and defaults invalid values (3,5) to 4 minutes as expected. Timer countdown, game ending on timeout, and time remaining broadcasts are properly implemented. Backend timer functionality is production-ready. 19/22 tests passed (86.4% success rate) with 4/5 timer-specific tests passing."
 
+  - task: "Authentication API endpoints"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+        - agent: "testing"
+        - comment: "Authentication system implemented with POST /api/auth/profile, GET /api/auth/me, POST /api/auth/logout, GET /api/profile/{user_id}, GET /api/leaderboard endpoints. Needs comprehensive testing."
+
+  - task: "Database collections for authentication"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+        - agent: "testing"
+        - comment: "MongoDB collections implemented: users_collection (user data with ELO ratings), sessions_collection (session management), game_history_collection (game history tracking). Needs testing."
+
+  - task: "ELO rating system"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+        - agent: "testing"
+        - comment: "ELO rating calculation function implemented with calculate_elo_change function for different rating scenarios. Needs testing with various rating scenarios."
+
+  - task: "Game integration with authentication"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+        - agent: "testing"
+        - comment: "Game system updated to support authenticated users: room creation with authenticated users, WebSocket connections with session tokens, game ending with statistics updates. Needs testing."
+
+  - task: "Session management"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+        - agent: "testing"
+        - comment: "Session token validation and expiration handling implemented. Needs testing for token validation and expiration scenarios."
+
 frontend:
   - task: "Logo integration"
     implemented: true
