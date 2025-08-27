@@ -146,16 +146,16 @@ frontend:
         - comment: "Integrated Nikki's logo into the game interface header, replacing the generic icon. Logo displays in menu screen."
 
   - task: "Make tiles bigger"
-    implemented: false
-    working: false
+    implemented: true
+    working: "needs_testing"
     file: "/app/frontend/src/App.js, /app/frontend/src/App.css"
     stuck_count: 0
     priority: "medium"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
-        - working: false
+        - working: "needs_testing"
         - agent: "main"
-        - comment: "Letter tiles need to be made bigger for better user experience"
+        - comment: "Made letter tiles bigger with increased size (min-h-60px), better grid spacing (gap-3), larger text (text-xl), border-3, and enhanced styling with shadows. Reduced columns for better tile size."
 
   - task: "Timer display and selection UI"
     implemented: false
