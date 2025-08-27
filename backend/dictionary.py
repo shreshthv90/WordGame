@@ -256,7 +256,7 @@ FOUR_LETTER_WORDS = {
     'WORM', 'WORN', 'WRAP', 'YARD', 'YARN', 'YEAR', 'YELL', 'YOGA', 'YOUR', 'ZERO', 'ZEST', 'ZINC', 'ZONE', 'ZOOM'
 } | ADDITIONAL_FOUR_LETTER_WORDS
 
-# 5-letter words (800+ words)
+# 5-letter words (Combining base + additional words)
 FIVE_LETTER_WORDS = {
     'ABOUT', 'ABOVE', 'ABUSE', 'ACTOR', 'ACUTE', 'ADMIT', 'ADOPT', 'ADULT', 'AFTER', 'AGAIN', 'AGENT', 'AGREE',
     'AHEAD', 'ALARM', 'ALBUM', 'ALERT', 'ALIEN', 'ALIGN', 'ALIKE', 'ALIVE', 'ALLOW', 'ALONE', 'ALONG', 'ALTER',
