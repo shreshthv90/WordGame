@@ -723,10 +723,18 @@ async def letter_generation_timer(room_code: str):
             }, room_code)
         
         if game.should_end_game():
-            game.game_ended = True
+            await game.end_game_and_update_stats()  # Update stats before ending
             await manager.broadcast_to_room({
                 "type": "game_ended",
-                "final_scores": list(game.players.values())
+                "final_scores": [
+                    {
+                        "name": p["name"],
+                        "score": p["score"],
+                        "elo_rating": p.get("elo_rating"),
+                        "is_authenticated": p.get("user") is not None
+                    }
+                    for p in game.players.values()
+                ]
             }, room_code)
             break
             
