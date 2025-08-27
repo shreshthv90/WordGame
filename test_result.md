@@ -279,12 +279,11 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Timer functionality"
-    - "Timer display and selection UI"
-    - "Logo integration"
-    - "Make tiles bigger"
-    - "Rules section with letter points"
-    - "Success animation with logo and thumbs up"
+    - "Authentication API endpoints"
+    - "Database collections for authentication"
+    - "ELO rating system"
+    - "Game integration with authentication"
+    - "Session management"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
