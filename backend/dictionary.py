@@ -254,7 +254,7 @@ FOUR_LETTER_WORDS = {
     'WEST', 'WHAT', 'WHEN', 'WHEY', 'WHIP', 'WHOM', 'WICK', 'WIDE', 'WIFE', 'WILD', 'WILL', 'WIND', 'WINE', 'WING',
     'WINK', 'WINS', 'WIPE', 'WIRE', 'WISE', 'WISH', 'WITH', 'WOKE', 'WOLF', 'WOOD', 'WOOL', 'WORD', 'WORE', 'WORK',
     'WORM', 'WORN', 'WRAP', 'YARD', 'YARN', 'YEAR', 'YELL', 'YOGA', 'YOUR', 'ZERO', 'ZEST', 'ZINC', 'ZONE', 'ZOOM'
-}
+} | ADDITIONAL_FOUR_LETTER_WORDS
 
 # 5-letter words (800+ words)
 FIVE_LETTER_WORDS = {
