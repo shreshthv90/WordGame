@@ -412,6 +412,33 @@ async def game_timer_countdown(room_code: str):
             
         await asyncio.sleep(10)  # Update every 10 seconds
 
+async def game_timer_countdown(room_code: str):
+    """Countdown timer for the game duration"""
+    game = games.get(room_code)
+    if not game:
+        return
+    
+    while game.game_started and not game.should_end_game():
+        time_remaining = game.get_time_remaining()
+        
+        # Broadcast time remaining every 10 seconds
+        await manager.broadcast_to_room({
+            "type": "timer_update",
+            "time_remaining": time_remaining
+        }, room_code)
+        
+        # Check if time is up
+        if time_remaining <= 0:
+            game.game_ended = True
+            await manager.broadcast_to_room({
+                "type": "game_ended",
+                "reason": "time_up",
+                "final_scores": list(game.players.values())
+            }, room_code)
+            break
+            
+        await asyncio.sleep(10)  # Update every 10 seconds
+
 # Include the router
 app.include_router(api_router)
 
