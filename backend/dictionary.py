@@ -379,7 +379,7 @@ FIVE_LETTER_WORDS = {
     'WROTE', 'YARDS', 'YEARS', 'YOUNG', 'YOURS', 'YOUTH', 'ZONES'
 } | ADDITIONAL_FIVE_LETTER_WORDS
 
-# 6-letter words (600+ words)
+# 6-letter words (Combining base + additional words)
 SIX_LETTER_WORDS = {
     'ACCEPT', 'ACCESS', 'ACCORD', 'ACROSS', 'ACTION', 'ACTIVE', 'ACTUAL', 'ADJUST', 'ADVICE', 'ADVISE', 'AFFECT',
     'AFFORD', 'AFRAID', 'AFRICA', 'AGENCY', 'AGENDA', 'AGREED', 'ALMOST', 'ALWAYS', 'AMOUNT', 'ANIMAL', 'ANNUAL',
