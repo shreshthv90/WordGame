@@ -187,7 +187,7 @@ class GameState:
         return sum(SCRABBLE_SCORES[letter.upper()] for letter in word)
 
     def should_end_game(self) -> bool:
-        # Game ends if deck is empty or 26 letters on table with 26 seconds timeout
+        # Game ends if deck is empty, 26 letters on table with 26 seconds timeout, or timer expires
         if not self.deck:
             return True
         if len(self.letters_on_table) >= 26:
@@ -195,6 +195,13 @@ class GameState:
                 return time.time() - self.last_word_time >= 26
             elif self.last_letter_time:
                 return time.time() - self.last_letter_time >= 26
+        
+        # Check if timer has expired
+        if self.game_started and self.game_start_time:
+            elapsed_minutes = (time.time() - self.game_start_time) / 60
+            if elapsed_minutes >= self.timer_minutes:
+                return True
+                
         return False
 
 # Connection manager
