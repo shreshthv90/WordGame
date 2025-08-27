@@ -158,16 +158,16 @@ frontend:
         - comment: "Made letter tiles bigger with increased size (min-h-60px), better grid spacing (gap-3), larger text (text-xl), border-3, and enhanced styling with shadows. Reduced columns for better tile size."
 
   - task: "Timer display and selection UI"
-    implemented: false
-    working: false
+    implemented: true
+    working: "needs_testing"
     file: "/app/frontend/src/App.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
-        - working: false
+        - working: "needs_testing"
         - agent: "main"
-        - comment: "Need to add timer selection UI for room creation and timer display during gameplay"
+        - comment: "Added timer selection UI (2/4/6 minutes) in room creation, timer display in lobby and gameplay, countdown formatting, and timer update handling. Frontend changes complete."
 
 metadata:
   created_by: "main_agent"
