@@ -567,33 +567,42 @@ function App() {
           </Card>
 
           {/* Word Formation */}
-          <Card className="bg-white/95 backdrop-blur-sm shadow-lg border-0">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-4">
-                <div className="flex-1">
-                  <div className="text-sm text-gray-600 mb-1">Current Word (Need exactly {gameWordLength} letters):</div>
-                  <div className="text-2xl font-bold font-mono bg-gray-50 p-3 rounded-lg min-h-[3rem] flex items-center">
-                    {currentWord || `Select ${gameWordLength} letters to form a word...`}
-                  </div>
-                  <div className="text-xs text-gray-500 mt-1">
-                    {currentWord ? `${currentWord.length}/${gameWordLength} letters selected` : `Need exactly ${gameWordLength} letters`}
+          <Card className="bg-white/95 backdrop-blur-sm shadow-lg border-0 game-container">
+            <CardContent className="p-6">
+              <div className="space-y-4">
+                {/* Current word display */}
+                <div className="flex justify-center">
+                  <div className="flex gap-2 min-h-[60px] items-center">
+                    {selectedLetters.map((letter, index) => (
+                      <div
+                        key={`${letter.id}-${index}`}
+                        className="w-12 h-12 bg-amber-100 border-2 border-amber-300 rounded-lg flex items-center justify-center font-bold text-xl letter-tile"
+                      >
+                        {letter.letter}
+                      </div>
+                    ))}
+                    {selectedLetters.length === 0 && (
+                      <div className="text-gray-400 text-lg">Select letters to form a word...</div>
+                    )}
                   </div>
                 </div>
-                <div className="space-x-2">
+
+                {/* Submit and Clear buttons */}
+                <div className="flex gap-3 justify-center">
+                  <Button 
+                    onClick={submitWord} 
+                    disabled={selectedLetters.length !== gameWordLength}
+                    className="px-8 py-2 bg-green-500 hover:bg-green-600 text-white rounded-xl font-semibold"
+                  >
+                    Submit
+                  </Button>
                   <Button 
                     onClick={clearSelection}
                     variant="outline"
-                    className="px-6"
                     disabled={selectedLetters.length === 0}
+                    className="px-8 py-2 border-red-300 text-red-600 hover:bg-red-50 rounded-xl font-semibold"
                   >
                     Clear
-                  </Button>
-                  <Button 
-                    onClick={submitWord}
-                    className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 px-6"
-                    disabled={currentWord.length !== gameWordLength}
-                  >
-                    Submit Word {currentWord.length === gameWordLength ? '✓' : `(${Math.abs(gameWordLength - currentWord.length)} ${currentWord.length < gameWordLength ? 'more' : 'less'})`}
                   </Button>
                 </div>
               </div>
