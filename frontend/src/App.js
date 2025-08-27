@@ -146,16 +146,18 @@ function App() {
   const createRoom = async () => {
     try {
       const response = await axios.post(`${API}/create-room`, {
-        word_length: selectedWordLength
+        word_length: selectedWordLength,
+        timer_minutes: selectedTimerMinutes
       });
       const data = response.data;
       setRoomCode(data.room_code);
       setGameWordLength(selectedWordLength);
+      setGameTimerMinutes(selectedTimerMinutes);
       setGameState('lobby');
       
       // Connect to WebSocket
       connectWebSocket(data.room_code);
-      addMessage(`Room created! Word length: ${selectedWordLength} letters`);
+      addMessage(`Room created! Word length: ${selectedWordLength} letters, Timer: ${selectedTimerMinutes} minutes`);
     } catch (error) {
       console.error('Error creating room:', error);
       addMessage('Failed to create room');
