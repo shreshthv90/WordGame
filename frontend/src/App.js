@@ -454,70 +454,141 @@ function App() {
 
   if (gameState === 'lobby') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-red-50 flex items-center justify-center p-4">
-        <Card className="w-full max-w-2xl shadow-2xl border-0 bg-white/95 backdrop-blur-sm">
-          <CardHeader className="text-center">
-            <CardTitle className="text-2xl font-bold text-gray-800">
-              Game Lobby
-            </CardTitle>
-            <div className="flex items-center justify-center gap-4">
-              <div className="flex items-center gap-2 text-lg font-mono text-amber-600 bg-amber-50 py-2 px-4 rounded-lg">
-                Room Code: <span className="font-bold text-xl">{roomCode}</span>
+      <div className="min-h-screen bg-gradient-to-br from-blue-400 via-indigo-500 to-purple-600 relative overflow-hidden">
+        {/* Animated background elements */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-16 right-16 w-36 h-36 bg-orange-300 rounded-full blur-2xl animate-pulse"></div>
+          <div className="absolute bottom-16 left-16 w-28 h-28 bg-yellow-300 rounded-full blur-xl animate-bounce delay-700"></div>
+        </div>
+        
+        <div className="relative z-10 flex items-center justify-center min-h-screen p-4">
+          <Card className="w-full max-w-lg shadow-2xl border-0 bg-white/95 backdrop-blur-lg rounded-3xl game-container overflow-hidden">
+            
+            {/* Header */}
+            <div className="bg-gradient-to-r from-orange-500 to-amber-500 p-6 text-center">
+              <div className="mx-auto w-20 h-20 bg-white rounded-3xl flex items-center justify-center mb-4 shadow-xl transform hover:scale-105 transition-transform">
+                <img 
+                  src="https://customer-assets.emergentagent.com/job_wordplay-hub-2/artifacts/4qngir0x_nikki%20logo.png" 
+                  alt="Nikki's Logo" 
+                  className="w-16 h-16 object-cover rounded-2xl"
+                />
               </div>
-              <div className="flex items-center gap-2 text-sm bg-blue-50 py-2 px-3 rounded-lg">
-                <span className="font-medium text-blue-700">Word Length: {gameWordLength}</span>
-              </div>
-              <div className="flex items-center gap-2 text-sm bg-green-50 py-2 px-3 rounded-lg">
-                <span className="font-medium text-green-700">Timer: {gameTimerMinutes} minutes</span>
-              </div>
-              <div className="flex items-center gap-2">
-                {connectionStatus === 'connected' ? 
-                  <Wifi className="h-5 w-5 text-green-500" /> : 
-                  <WifiOff className="h-5 w-5 text-red-500" />
-                }
-                <span className="text-sm text-gray-600 capitalize">{connectionStatus}</span>
+              <h1 className="text-3xl font-black text-white mb-2 drop-shadow-lg">
+                Battle Room Ready
+              </h1>
+              <div className="bg-white/20 rounded-full px-4 py-2 inline-block">
+                <span className="text-white font-black text-lg tracking-wider">{roomCode}</span>
               </div>
             </div>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="space-y-3">
-              <div className="flex items-center gap-2 text-gray-700">
-                <Users className="h-5 w-5" />
-                <span className="font-semibold">Players ({players.length})</span>
-              </div>
-              <div className="grid gap-2">
-                {players.map((player, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <span className="font-medium">{player.name}</span>
-                    <Badge variant="secondary">{player.score} pts</Badge>
+
+            <CardContent className="p-6 space-y-6">
+              
+              {/* Battle Settings */}
+              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-5 border-2 border-blue-200">
+                <h3 className="text-lg font-black text-gray-800 mb-4 flex items-center gap-2">
+                  <div className="w-3 h-3 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full"></div>
+                  Battle Configuration
+                </h3>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-white rounded-xl p-4 shadow-sm border-2 border-orange-200">
+                    <div className="text-orange-600 font-black text-sm">WORD LENGTH</div>
+                    <div className="text-2xl font-black text-gray-800">{gameWordLength}</div>
+                    <div className="text-xs text-gray-600 font-semibold">letters required</div>
                   </div>
-                ))}
-              </div>
-            </div>
-            
-            {players.length > 0 && !gameStarted && (
-              <Button 
-                onClick={startGame}
-                className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-semibold py-3 text-lg rounded-xl"
-              >
-                Start Game
-              </Button>
-            )}
-            
-            {messages.length > 0 && (
-              <div className="border-t pt-4">
-                <h3 className="font-semibold text-gray-700 mb-2">Game Messages</h3>
-                <div className="space-y-1 max-h-32 overflow-y-auto">
-                  {messages.map((msg, index) => (
-                    <p key={index} className="text-sm text-gray-600 p-2 bg-gray-50 rounded">
-                      {msg.text}
-                    </p>
-                  ))}
+                  <div className="bg-white rounded-xl p-4 shadow-sm border-2 border-blue-200">
+                    <div className="text-blue-600 font-black text-sm">BATTLE TIME</div>
+                    <div className="text-2xl font-black text-gray-800">{gameTimerMinutes}</div>
+                    <div className="text-xs text-gray-600 font-semibold">minutes</div>
+                  </div>
                 </div>
               </div>
-            )}
-          </CardContent>
-        </Card>
+
+              {/* Warriors (Players) */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-black text-gray-800 flex items-center gap-2">
+                  <div className="w-3 h-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full"></div>
+                  Warriors in Battle ({players.length})
+                </h3>
+                
+                <div className="space-y-3">
+                  {players.map((player, index) => (
+                    <div key={index} className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-4 border-2 border-purple-200 shadow-sm">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center shadow-lg">
+                          <span className="text-white font-black text-sm">⚔️</span>
+                        </div>
+                        <div>
+                          <div className="font-black text-gray-800">{player.name}</div>
+                          <div className="text-sm text-purple-600 font-semibold">Ready for battle</div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  
+                  {players.length === 0 && (
+                    <div className="text-center py-8 text-gray-500">
+                      <div className="text-4xl mb-2">⏳</div>
+                      <div className="font-semibold">Waiting for warriors to join...</div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="space-y-4">
+                {!gameStarted && (
+                  <button 
+                    onClick={startGame} 
+                    disabled={players.length < 1}
+                    className={`w-full py-4 rounded-2xl font-black text-lg shadow-xl transition-all duration-200 transform ${
+                      players.length >= 1
+                        ? 'bg-gradient-to-r from-green-500 via-emerald-500 to-teal-500 text-white hover:scale-105 hover:shadow-2xl'
+                        : 'bg-gray-400 text-gray-600 cursor-not-allowed'
+                    }`}
+                  >
+                    ⚔️ START BATTLE
+                  </button>
+                )}
+                
+                <button 
+                  onClick={() => {
+                    setGameState('menu');
+                    setRoomCode('');
+                    if (wsRef.current) {
+                      wsRef.current.close();
+                    }
+                  }}
+                  className="w-full py-3 rounded-2xl font-black text-sm bg-gradient-to-r from-red-500 to-pink-500 text-white shadow-lg hover:scale-105 transition-all duration-200"
+                >
+                  🚪 LEAVE ROOM
+                </button>
+              </div>
+
+              {/* Connection Status */}
+              <div className="text-center">
+                <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold ${
+                  connectionStatus === 'connected' 
+                    ? 'bg-green-100 text-green-700 border-2 border-green-300' 
+                    : 'bg-red-100 text-red-700 border-2 border-red-300'
+                }`}>
+                  {connectionStatus === 'connected' ? (
+                    <>
+                      <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                      Battle Ready
+                    </>
+                  ) : (
+                    <>
+                      <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                      Reconnecting...
+                    </>
+                  )}
+                </div>
+              </div>
+              
+            </CardContent>
+          </Card>
+        </div>
       </div>
     );
   }
