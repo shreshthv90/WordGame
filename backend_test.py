@@ -1,12 +1,15 @@
 import requests
 import sys
 import json
+import asyncio
+import websockets
 from datetime import datetime
 
 class WordSmithAPITester:
     def __init__(self, base_url="https://wordplay-hub-2.preview.emergentagent.com"):
         self.base_url = base_url
         self.api_url = f"{base_url}/api"
+        self.ws_url = f"wss://wordplay-hub-2.preview.emergentagent.com/api/ws"
         self.tests_run = 0
         self.tests_passed = 0
 
