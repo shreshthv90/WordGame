@@ -177,8 +177,9 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Dictionary expansion implementation"
     - "Timer functionality"
+    - "Logo integration"
+    - "Make tiles bigger"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
