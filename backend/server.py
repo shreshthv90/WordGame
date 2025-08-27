@@ -13,7 +13,8 @@ from pathlib import Path
 from pydantic import BaseModel, Field
 from typing import List, Dict, Set, Optional
 import uuid
-from datetime import datetime, timezone
+import requests
+from datetime import datetime, timezone, timedelta
 from dictionary import is_valid_word, get_words_by_length, ALL_WORDS
 
 ROOT_DIR = Path(__file__).parent
