@@ -270,143 +270,184 @@ function App() {
 
   if (gameState === 'menu') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-red-50 flex items-center justify-center p-4">
-        <Card className="w-full max-w-md shadow-2xl border-0 bg-white/95 backdrop-blur-sm game-container">
-          <CardHeader className="text-center pb-2">
-            <div className="mx-auto w-32 h-32 bg-gradient-to-br from-amber-500 to-orange-600 rounded-2xl flex items-center justify-center mb-6 overflow-hidden">
-              <img 
-                src="https://customer-assets.emergentagent.com/job_wordplay-hub-2/artifacts/4qngir0x_nikki%20logo.png" 
-                alt="Nikki's Logo" 
-                className="w-28 h-28 object-cover rounded-xl"
-              />
+      <div className="min-h-screen bg-gradient-to-br from-blue-400 via-blue-500 to-indigo-600 relative overflow-hidden">
+        {/* Animated background elements */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-10 left-10 w-32 h-32 bg-orange-300 rounded-full blur-xl animate-pulse"></div>
+          <div className="absolute top-32 right-20 w-24 h-24 bg-yellow-300 rounded-full blur-lg animate-bounce"></div>
+          <div className="absolute bottom-20 left-1/4 w-40 h-40 bg-orange-400 rounded-full blur-2xl animate-pulse delay-1000"></div>
+          <div className="absolute bottom-32 right-1/3 w-28 h-28 bg-amber-300 rounded-full blur-xl animate-bounce delay-500"></div>
+        </div>
+        
+        <div className="relative z-10 flex items-center justify-center min-h-screen p-4">
+          <Card className="w-full max-w-md shadow-2xl border-0 bg-white/95 backdrop-blur-lg rounded-3xl game-container overflow-hidden">
+            <div className="bg-gradient-to-r from-orange-500 to-amber-500 p-6 text-center">
+              <div className="mx-auto w-24 h-24 bg-white rounded-3xl flex items-center justify-center mb-4 shadow-lg transform hover:scale-105 transition-transform">
+                <img 
+                  src="https://customer-assets.emergentagent.com/job_wordplay-hub-2/artifacts/4qngir0x_nikki%20logo.png" 
+                  alt="Nikki's Logo" 
+                  className="w-20 h-20 object-cover rounded-2xl"
+                />
+              </div>
+              <h1 className="text-4xl font-black text-white mb-2 drop-shadow-lg">
+                Nikki's Word Rush
+              </h1>
+              <div className="bg-white/20 rounded-full px-4 py-1 inline-block">
+                <span className="text-white/90 text-sm font-semibold">Competitive Word Gaming</span>
+              </div>
             </div>
-            <CardTitle className="text-4xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent mb-6">
-              Nikki's Word Rush
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="space-y-3">
-              <Input
-                placeholder="Enter your name"
-                value={playerName}
-                onChange={(e) => setPlayerName(e.target.value)}
-                className="text-center text-lg font-medium border-2 border-gray-200 focus:border-amber-400"
-              />
-              
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Word Length:</label>
-                <div className="grid grid-cols-4 gap-2">
-                  {[3, 4, 5, 6].map(length => (
-                    <Button
-                      key={length}
-                      variant={selectedWordLength === length ? "default" : "outline"}
-                      onClick={() => setSelectedWordLength(length)}
-                      className={`text-sm ${selectedWordLength === length ? 
-                        'bg-amber-500 hover:bg-amber-600 text-white' : 
-                        'border-amber-300 text-amber-600 hover:bg-amber-50'}`}
-                    >
-                      {length} Letters
-                    </Button>
-                  ))}
-                </div>
-                <p className="text-xs text-gray-500 text-center">
-                  All words in this game must be exactly {selectedWordLength} letters long
-                </p>
+
+            <CardContent className="p-6 space-y-6">
+              {/* Player Name Input */}
+              <div className="space-y-3">
+                <label className="text-lg font-bold text-gray-800 flex items-center gap-2">
+                  <div className="w-3 h-3 bg-gradient-to-r from-orange-500 to-amber-500 rounded-full"></div>
+                  Your Name
+                </label>
+                <Input
+                  placeholder="Enter your player name"
+                  value={playerName}
+                  onChange={(e) => setPlayerName(e.target.value)}
+                  className="text-lg p-4 border-3 border-blue-200 focus:border-orange-400 rounded-2xl font-semibold bg-blue-50/50 placeholder:text-gray-500"
+                />
               </div>
 
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Game Timer:</label>
-                <div className="grid grid-cols-3 gap-2">
-                  {[2, 4, 6].map(minutes => (
-                    <Button
-                      key={minutes}
-                      variant={selectedTimerMinutes === minutes ? "default" : "outline"}
-                      onClick={() => setSelectedTimerMinutes(minutes)}
-                      className={`text-sm ${selectedTimerMinutes === minutes ? 
-                        'bg-blue-500 hover:bg-blue-600 text-white' : 
-                        'border-blue-300 text-blue-600 hover:bg-blue-50'}`}
-                    >
-                      {minutes} Min
-                    </Button>
-                  ))}
+              {/* Game Settings */}
+              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-4 border-2 border-blue-200">
+                <h3 className="text-lg font-black text-gray-800 mb-4 flex items-center gap-2">
+                  <div className="w-3 h-3 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full"></div>
+                  Game Settings
+                </h3>
+                
+                <div className="space-y-4">
+                  <div className="space-y-3">
+                    <label className="text-sm font-bold text-gray-700">Word Length:</label>
+                    <div className="grid grid-cols-4 gap-2">
+                      {[3, 4, 5, 6].map(length => (
+                        <button
+                          key={length}
+                          onClick={() => setSelectedWordLength(length)}
+                          className={`p-3 rounded-xl font-black text-sm transition-all duration-200 transform hover:scale-105 shadow-lg ${
+                            selectedWordLength === length
+                              ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white scale-105 shadow-xl'
+                              : 'bg-white text-gray-700 hover:bg-orange-50 border-2 border-orange-200'
+                          }`}
+                        >
+                          {length}
+                        </button>
+                      ))}
+                    </div>
+                    <div className="text-center">
+                      <span className="text-xs bg-white/60 px-3 py-1 rounded-full text-gray-600 font-semibold">
+                        All words must be exactly {selectedWordLength} letters long
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <label className="text-sm font-bold text-gray-700">Game Timer:</label>
+                    <div className="grid grid-cols-3 gap-2">
+                      {[2, 4, 6].map(minutes => (
+                        <button
+                          key={minutes}
+                          onClick={() => setSelectedTimerMinutes(minutes)}
+                          className={`p-3 rounded-xl font-black text-sm transition-all duration-200 transform hover:scale-105 shadow-lg ${
+                            selectedTimerMinutes === minutes
+                              ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white scale-105 shadow-xl'
+                              : 'bg-white text-gray-700 hover:bg-blue-50 border-2 border-blue-200'
+                          }`}
+                        >
+                          {minutes}m
+                        </button>
+                      ))}
+                    </div>
+                    <div className="text-center">
+                      <span className="text-xs bg-white/60 px-3 py-1 rounded-full text-gray-600 font-semibold">
+                        Battle ends after {selectedTimerMinutes} minutes
+                      </span>
+                    </div>
+                  </div>
                 </div>
-                <p className="text-xs text-gray-500 text-center">
-                  Game will end after {selectedTimerMinutes} minutes
-                </p>
               </div>
-            </div>
-            
-            <div className="space-y-3">
-              <Button 
-                onClick={createRoom} 
-                className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-semibold py-3 text-lg rounded-xl shadow-lg"
-                disabled={!playerName}
-              >
-                Create New Game
-              </Button>
-              
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <Separator className="w-full" />
-                </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-white px-2 text-gray-500">Or</span>
-                </div>
-              </div>
-              
-              <div className="space-y-2">
-                <Input
-                  placeholder="Enter room code"
-                  value={roomCode}
-                  onChange={(e) => setRoomCode(e.target.value.toUpperCase())}
-                  className="text-center text-lg font-mono tracking-wider border-2 border-gray-200 focus:border-amber-400"
-                />
+
+              {/* Action Buttons */}
+              <div className="space-y-4">
                 <Button 
-                  onClick={joinRoom} 
-                  variant="outline" 
-                  className="w-full border-2 border-amber-500 text-amber-600 hover:bg-amber-50 font-semibold py-3 text-lg rounded-xl"
-                  disabled={!playerName || !roomCode}
+                  onClick={createRoom} 
+                  className="w-full bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-500 hover:from-orange-600 hover:via-amber-600 hover:to-yellow-600 text-white font-black py-4 text-lg rounded-2xl shadow-xl transform hover:scale-105 transition-all duration-200"
+                  disabled={!playerName}
                 >
-                  Join Game
+                  🎮 Start New Battle
                 </Button>
+                
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center">
+                    <Separator className="w-full bg-gradient-to-r from-transparent via-gray-300 to-transparent" />
+                  </div>
+                  <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-white px-4 py-1 text-gray-500 font-bold rounded-full">Or Join Battle</span>
+                  </div>
+                </div>
+                
+                <div className="space-y-3">
+                  <Input
+                    placeholder="BATTLE CODE"
+                    value={roomCode}
+                    onChange={(e) => setRoomCode(e.target.value.toUpperCase())}
+                    className="text-center text-xl font-black tracking-wider border-3 border-blue-200 focus:border-blue-400 rounded-2xl p-4 bg-blue-50/50"
+                  />
+                  <Button 
+                    onClick={joinRoom} 
+                    variant="outline" 
+                    className="w-full border-3 border-blue-500 text-blue-600 hover:bg-blue-500 hover:text-white font-black py-4 text-lg rounded-2xl shadow-lg transform hover:scale-105 transition-all duration-200"
+                    disabled={!playerName || !roomCode}
+                  >
+                    ⚔️ Join Battle
+                  </Button>
+                </div>
               </div>
 
               {/* Rules Section */}
-              <div className="border-t pt-4">
+              <div className="border-t-2 border-gray-200 pt-4">
                 <Button
                   variant="ghost"
                   onClick={() => setShowRules(!showRules)}
-                  className="w-full text-sm text-gray-600 hover:text-gray-800"
+                  className="w-full text-sm text-gray-600 hover:text-gray-800 font-bold bg-gray-50 hover:bg-gray-100 rounded-xl p-3"
                 >
-                  📋 {showRules ? 'Hide' : 'Show'} Letter Points & Rules
+                  {showRules ? '📋 Hide' : '📋 Show'} Battle Rules & Points
                 </Button>
                 
                 {showRules && (
-                  <div className="mt-3 p-4 bg-gray-50 rounded-lg text-sm">
-                    <h3 className="font-semibold text-gray-800 mb-3">Letter Point Values:</h3>
-                    <div className="grid grid-cols-1 gap-2 text-xs">
-                      {Object.entries(letterScores).map(([points, letters]) => (
-                        <div key={points} className="flex items-center justify-between">
-                          <span className="font-medium text-gray-700">{points} point{points === '1' ? '' : 's'}:</span>
-                          <span className="font-mono text-gray-600">{letters.join(' ')}</span>
+                  <div className="mt-4 p-4 bg-gradient-to-r from-gray-50 to-blue-50 rounded-2xl border-2 border-gray-200">
+                    <h3 className="font-black text-gray-800 mb-3 text-center">⚔️ Battle Rules</h3>
+                    <div className="grid grid-cols-1 gap-3 text-xs">
+                      <div className="bg-white rounded-xl p-3 shadow-sm">
+                        <h4 className="font-bold text-gray-800 mb-2">Letter Points:</h4>
+                        <div className="grid grid-cols-2 gap-1">
+                          {Object.entries(letterScores).map(([points, letters]) => (
+                            <div key={points} className="flex justify-between items-center">
+                              <span className="font-bold text-orange-600">{points}pt:</span>
+                              <span className="font-mono text-gray-700 text-right text-xs">{letters.slice(0,5).join('')}</span>
+                            </div>
+                          ))}
                         </div>
-                      ))}
-                    </div>
-                    <div className="mt-3 pt-3 border-t border-gray-200">
-                      <h4 className="font-semibold text-gray-800 mb-1">How to Play:</h4>
-                      <ul className="text-xs text-gray-600 space-y-1">
-                        <li>• Select letters to form words of the required length</li>
-                        <li>• First player to submit a valid word gets the points</li>
-                        <li>• Game ends when time runs out or no more letters</li>
-                        <li>• Higher point letters are worth more!</li>
-                      </ul>
+                      </div>
+                      <div className="bg-white rounded-xl p-3 shadow-sm">
+                        <h4 className="font-bold text-gray-800 mb-2">Battle Strategy:</h4>
+                        <ul className="text-xs text-gray-600 space-y-1">
+                          <li>• First to submit valid word wins the letters</li>
+                          <li>• Higher point letters = higher scores</li>
+                          <li>• Battle ends when timer expires</li>
+                          <li>• Most points wins the battle!</li>
+                        </ul>
+                      </div>
                     </div>
                   </div>
                 )}
               </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     );
   }
