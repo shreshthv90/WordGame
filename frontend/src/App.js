@@ -372,6 +372,40 @@ function App() {
                   Join Game
                 </Button>
               </div>
+
+              {/* Rules Section */}
+              <div className="border-t pt-4">
+                <Button
+                  variant="ghost"
+                  onClick={() => setShowRules(!showRules)}
+                  className="w-full text-sm text-gray-600 hover:text-gray-800"
+                >
+                  📋 {showRules ? 'Hide' : 'Show'} Letter Points & Rules
+                </Button>
+                
+                {showRules && (
+                  <div className="mt-3 p-4 bg-gray-50 rounded-lg text-sm">
+                    <h3 className="font-semibold text-gray-800 mb-3">Letter Point Values:</h3>
+                    <div className="grid grid-cols-1 gap-2 text-xs">
+                      {Object.entries(letterScores).map(([points, letters]) => (
+                        <div key={points} className="flex items-center justify-between">
+                          <span className="font-medium text-gray-700">{points} point{points === '1' ? '' : 's'}:</span>
+                          <span className="font-mono text-gray-600">{letters.join(' ')}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="mt-3 pt-3 border-t border-gray-200">
+                      <h4 className="font-semibold text-gray-800 mb-1">How to Play:</h4>
+                      <ul className="text-xs text-gray-600 space-y-1">
+                        <li>• Select letters to form words of the required length</li>
+                        <li>• First player to submit a valid word gets the points</li>
+                        <li>• Game ends when time runs out or no more letters</li>
+                        <li>• Higher point letters are worth more!</li>
+                      </ul>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </CardContent>
         </Card>
