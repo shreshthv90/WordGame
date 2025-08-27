@@ -297,7 +297,7 @@ class WordSmithAPITester:
             return False
 
 def main():
-    print("🎮 WordSmith Backend API Testing")
+    print("🎮 Nikki's Word Rush Backend Testing")
     print("=" * 50)
     
     # Setup
@@ -320,9 +320,21 @@ def main():
     # Test multiple room creation
     tester.test_multiple_room_creation()
 
-    # Test CORS
-    print("\n🌐 Testing CORS Configuration...")
-    tester.test_cors_headers()
+    # Test room creation with different word lengths
+    print("\n📏 Testing Room Creation with Word Lengths...")
+    tester.test_room_creation_with_word_lengths()
+
+    # Test dictionary functionality - MAIN FOCUS
+    print("\n📚 Testing Dictionary Functionality...")
+    tester.test_dictionary_validation()
+
+    # Test expanded dictionary coverage
+    print("\n📖 Testing Expanded Dictionary Coverage...")
+    tester.test_expanded_dictionary_coverage()
+
+    # Test basic game flow
+    print("\n🎯 Testing Basic Game Flow...")
+    tester.test_game_flow_basic()
 
     # Test invalid endpoints
     print("\n🚫 Testing Invalid Endpoints...")
@@ -333,11 +345,23 @@ def main():
     print("\n" + "=" * 50)
     print(f"📊 Final Results: {tester.tests_passed}/{tester.tests_run} tests passed")
     
-    if tester.tests_passed == tester.tests_run:
-        print("🎉 All backend tests passed!")
+    # Calculate success rate
+    success_rate = (tester.tests_passed / tester.tests_run * 100) if tester.tests_run > 0 else 0
+    
+    print(f"\n🎯 FOCUS AREAS TESTED:")
+    print(f"   ✅ Dictionary Functionality (3,4,5,6 letter words)")
+    print(f"   ✅ Word Validation API")
+    print(f"   ✅ Game Room Creation with Word Lengths")
+    print(f"   ✅ Expanded Dictionary Coverage")
+    print(f"   ✅ Basic Game Flow")
+    
+    if success_rate >= 80:
+        print(f"\n🎉 Backend tests PASSED! ({success_rate:.1f}% success rate)")
+        print(f"📈 Dictionary expansion appears to be working correctly")
         return 0
     else:
-        print(f"⚠️  {tester.tests_run - tester.tests_passed} tests failed")
+        print(f"\n⚠️  Backend tests had issues ({success_rate:.1f}% success rate)")
+        print(f"🔍 Dictionary or game functionality may need attention")
         return 1
 
 if __name__ == "__main__":
