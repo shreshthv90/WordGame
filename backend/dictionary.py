@@ -149,7 +149,7 @@ def is_reasonable_word(word: str) -> bool:
     # This is more permissive to avoid rejecting valid but uncommon words
     return True
 
-# 4-letter words (1000+ words)
+# 4-letter words (Combining base + additional words for comprehensive coverage)
 FOUR_LETTER_WORDS = {
     'WORD', 'WHAT', 'SAID', 'EACH', 'WHICH', 'WILL', 'ABOUT', 'MANY', 'THEN', 'THEM', 'THESE', 'SOME', 'WOULD',
     'MAKE', 'LIKE', 'INTO', 'TIME', 'VERY', 'WHEN', 'COME', 'HERE', 'JUST', 'KNOW', 'TAKE', 'THAN', 'ONLY', 'GOOD',
