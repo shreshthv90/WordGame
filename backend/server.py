@@ -757,11 +757,19 @@ async def game_timer_countdown(room_code: str):
         
         # Check if time is up
         if time_remaining <= 0:
-            game.game_ended = True
+            await game.end_game_and_update_stats()  # Update stats before ending
             await manager.broadcast_to_room({
                 "type": "game_ended",
                 "reason": "time_up",
-                "final_scores": list(game.players.values())
+                "final_scores": [
+                    {
+                        "name": p["name"],
+                        "score": p["score"],
+                        "elo_rating": p.get("elo_rating"),
+                        "is_authenticated": p.get("user") is not None
+                    }
+                    for p in game.players.values()
+                ]
             }, room_code)
             break
             
