@@ -44,6 +44,25 @@ function App() {
     return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
   };
 
+  const triggerSuccessAnimation = (word) => {
+    setSuccessWord(word);
+    setShowSuccessAnimation(true);
+    setTimeout(() => {
+      setShowSuccessAnimation(false);
+    }, 2000); // Hide after 2 seconds
+  };
+
+  // Scrabble letter scores for rules display
+  const letterScores = {
+    1: ['A', 'E', 'I', 'O', 'U', 'L', 'N', 'S', 'T', 'R'],
+    2: ['D', 'G'],
+    3: ['B', 'C', 'M', 'P'],
+    4: ['F', 'H', 'V', 'W', 'Y'],
+    5: ['K'],
+    8: ['J', 'X'],
+    10: ['Q', 'Z']
+  };
+
   const connectWebSocket = useCallback((code) => {
     const wsUrl = `${WS_URL}/api/ws/${code}`;
     console.log('Connecting to WebSocket:', wsUrl);
