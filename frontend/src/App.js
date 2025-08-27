@@ -602,23 +602,54 @@ function App() {
             </CardContent>
           </Card>
 
-          {/* Messages */}
-          {messages.length > 0 && (
+          {/* Messages and Rules */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Messages */}
+            {messages.length > 0 && (
+              <Card className="bg-white/95 backdrop-blur-sm shadow-lg border-0">
+                <CardHeader>
+                  <CardTitle className="text-lg">Game Feed</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2 max-h-40 overflow-y-auto">
+                    {messages.slice(-5).map((msg, index) => (
+                      <p key={index} className="text-sm p-2 bg-gray-50 rounded">
+                        {msg.text}
+                      </p>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Rules Section for Playing */}
             <Card className="bg-white/95 backdrop-blur-sm shadow-lg border-0">
               <CardHeader>
-                <CardTitle className="text-lg">Game Feed</CardTitle>
+                <CardTitle className="text-lg flex items-center justify-between">
+                  Letter Points
+                  <Button
+                    variant="ghost"
+                    onClick={() => setShowRules(!showRules)}
+                    className="text-sm px-2 py-1"
+                  >
+                    {showRules ? '▼' : '▶'}
+                  </Button>
+                </CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="space-y-2 max-h-40 overflow-y-auto">
-                  {messages.slice(-5).map((msg, index) => (
-                    <p key={index} className="text-sm p-2 bg-gray-50 rounded">
-                      {msg.text}
-                    </p>
-                  ))}
-                </div>
-              </CardContent>
+              {showRules && (
+                <CardContent>
+                  <div className="grid grid-cols-2 gap-2 text-xs">
+                    {Object.entries(letterScores).map(([points, letters]) => (
+                      <div key={points} className="flex items-center justify-between">
+                        <span className="font-medium text-gray-700">{points}pt:</span>
+                        <span className="font-mono text-gray-600 text-right">{letters.join(' ')}</span>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              )}
             </Card>
-          )}
+          </div>
         </div>
       </div>
     );
