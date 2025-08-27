@@ -485,8 +485,24 @@ function App() {
 
   if (gameState === 'playing') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-red-50 p-4">
+      <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-red-50 p-4 relative">
         <div className="max-w-6xl mx-auto space-y-6">
+          
+          {/* Success Animation - Positioned on the right side */}
+          {showSuccessAnimation && (
+            <div className="fixed top-4 right-4 z-50 animate-bounce">
+              <div className="bg-white rounded-2xl p-4 shadow-2xl border-2 border-green-400 flex items-center gap-3">
+                <img 
+                  src="https://customer-assets.emergentagent.com/job_wordplay-hub-2/artifacts/4qngir0x_nikki%20logo.png" 
+                  alt="Success!" 
+                  className="w-12 h-12 object-cover rounded-xl"
+                />
+                <div className="text-green-600 text-2xl">👍</div>
+                <div className="text-green-700 font-semibold">{successWord}!</div>
+              </div>
+            </div>
+          )}
+
           {/* Header */}
           <Card className="bg-white/95 backdrop-blur-sm shadow-lg border-0">
             <CardContent className="p-4">
