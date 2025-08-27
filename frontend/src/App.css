@@ -22,6 +22,15 @@ code {
     monospace;
 }
 
+.game-container {
+  font-family: 'Sofia Sans', sans-serif;
+}
+
+.letter-tile {
+  font-family: 'Sofia Sans', sans-serif;
+  font-weight: 600;
+}
+
 .App {
   min-height: 100vh;
 }
