@@ -140,6 +140,7 @@ function App() {
         setLettersOnTable(message.letters);
         setSelectedLetters([]);
         setCurrentWord('');
+        triggerSuccessAnimation(message.word); // Trigger success animation
         addMessage(`${message.player} scored ${message.score} points with "${message.word}"!`);
         break;
         
