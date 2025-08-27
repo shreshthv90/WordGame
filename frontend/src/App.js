@@ -269,7 +269,8 @@ function App() {
     if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN && playerName) {
       wsRef.current.send(JSON.stringify({
         type: 'join',
-        player_name: playerName
+        player_name: playerName,
+        session_token: sessionToken // Include session token for authentication
       }));
     }
   };
