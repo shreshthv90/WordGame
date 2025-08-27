@@ -874,6 +874,129 @@ function App() {
     );
   }
 
+  if (gameState === 'profile') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-400 via-indigo-500 to-purple-600 relative overflow-hidden p-4">
+        {/* Animated background elements */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-10 left-10 w-32 h-32 bg-orange-300 rounded-full blur-xl animate-pulse"></div>
+          <div className="absolute bottom-20 right-20 w-28 h-28 bg-yellow-300 rounded-full blur-lg animate-bounce delay-1000"></div>
+        </div>
+
+        <div className="relative z-10 max-w-4xl mx-auto space-y-6">
+          {/* Header */}
+          <Card className="bg-gradient-to-r from-orange-500 to-amber-500 shadow-2xl border-0 rounded-2xl overflow-hidden game-container">
+            <CardContent className="p-6">
+              <div className="flex justify-between items-center text-white">
+                <div className="flex items-center gap-4">
+                  <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-lg overflow-hidden">
+                    {currentUser?.picture ? (
+                      <img 
+                        src={currentUser.picture} 
+                        alt="Profile" 
+                        className="w-14 h-14 object-cover rounded-xl"
+                      />
+                    ) : (
+                      <img 
+                        src="https://customer-assets.emergentagent.com/job_wordplay-hub-2/artifacts/4qngir0x_nikki%20logo.png" 
+                        alt="Default" 
+                        className="w-14 h-14 object-cover rounded-xl"
+                      />
+                    )}
+                  </div>
+                  <div>
+                    <h1 className="text-3xl font-black drop-shadow-lg">{currentUser?.name || 'Warrior'}</h1>
+                    <p className="text-white/80 text-sm font-semibold">ELO Rating: {currentUser?.elo_rating || 1000}</p>
+                  </div>
+                </div>
+                
+                <div className="flex gap-3">
+                  <button 
+                    onClick={() => setGameState('menu')}
+                    className="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-xl font-black text-white transition-all"
+                  >
+                    🎮 Play Game
+                  </button>
+                  <button 
+                    onClick={handleLogout}
+                    className="bg-red-500/80 hover:bg-red-600 px-4 py-2 rounded-xl font-black text-white transition-all"
+                  >
+                    🚪 Logout
+                  </button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Stats Cards */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <Card className="bg-white/95 backdrop-blur-lg shadow-xl border-0 rounded-2xl game-container">
+              <CardContent className="p-4 text-center">
+                <div className="text-3xl font-black text-blue-600">{currentUser?.total_games || 0}</div>
+                <div className="text-sm font-bold text-gray-600">Total Battles</div>
+              </CardContent>
+            </Card>
+            
+            <Card className="bg-white/95 backdrop-blur-lg shadow-xl border-0 rounded-2xl game-container">
+              <CardContent className="p-4 text-center">
+                <div className="text-3xl font-black text-green-600">{currentUser?.total_wins || 0}</div>
+                <div className="text-sm font-bold text-gray-600">Victories</div>
+              </CardContent>
+            </Card>
+            
+            <Card className="bg-white/95 backdrop-blur-lg shadow-xl border-0 rounded-2xl game-container">
+              <CardContent className="p-4 text-center">
+                <div className="text-3xl font-black text-orange-600">{currentUser?.total_score || 0}</div>
+                <div className="text-sm font-bold text-gray-600">Total Points</div>
+              </CardContent>
+            </Card>
+            
+            <Card className="bg-white/95 backdrop-blur-lg shadow-xl border-0 rounded-2xl game-container">
+              <CardContent className="p-4 text-center">
+                <div className="text-3xl font-black text-purple-600">
+                  {currentUser?.total_games ? Math.round((currentUser.total_wins / currentUser.total_games) * 100) : 0}%
+                </div>
+                <div className="text-sm font-bold text-gray-600">Win Rate</div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Global Leaderboard Preview */}
+          <Card className="bg-white/95 backdrop-blur-lg shadow-xl border-0 rounded-2xl game-container">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-2xl font-black text-gray-800">🏆 Global Leaderboard</h2>
+                <span className="text-sm bg-gradient-to-r from-orange-500 to-amber-500 text-white px-3 py-1 rounded-full font-bold">
+                  TOP WARRIORS
+                </span>
+              </div>
+              
+              <div className="space-y-3">
+                <div className="text-center py-8 text-gray-500">
+                  <div className="text-4xl mb-2">⏳</div>
+                  <div className="font-semibold">Connect to internet to see global rankings</div>
+                  <div className="text-sm text-gray-400 mt-2">
+                    Battle against other players to earn ELO and climb the ranks!
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Back to Game */}
+          <div className="text-center">
+            <button 
+              onClick={() => setGameState('menu')}
+              className="bg-gradient-to-r from-green-500 via-emerald-500 to-teal-500 hover:from-green-600 hover:via-emerald-600 hover:to-teal-600 text-white font-black py-4 px-8 text-lg rounded-2xl shadow-xl transform hover:scale-105 transition-all duration-200"
+            >
+              ⚔️ Ready for Battle
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return null;
 }
 
