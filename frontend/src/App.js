@@ -524,75 +524,97 @@ function App() {
 
   if (gameState === 'playing') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-red-50 p-4 relative">
-        <div className="max-w-6xl mx-auto space-y-6">
+      <div className="min-h-screen bg-gradient-to-br from-blue-400 via-indigo-500 to-purple-600 p-4 relative overflow-hidden">
+        {/* Animated background elements */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute top-20 left-20 w-40 h-40 bg-orange-300 rounded-full blur-2xl animate-pulse"></div>
+          <div className="absolute bottom-20 right-20 w-32 h-32 bg-yellow-300 rounded-full blur-xl animate-bounce delay-1000"></div>
+        </div>
+        
+        <div className="relative z-10 max-w-6xl mx-auto space-y-4">
           
           {/* Success Animation - Positioned on the right side */}
           {showSuccessAnimation && (
             <div className="fixed top-4 right-4 z-50 animate-bounce">
-              <div className="bg-white rounded-2xl p-4 shadow-2xl border-2 border-green-400 flex items-center gap-3">
+              <div className="bg-gradient-to-r from-green-400 to-emerald-500 rounded-2xl p-4 shadow-2xl border-3 border-white flex items-center gap-3">
                 <img 
                   src="https://customer-assets.emergentagent.com/job_wordplay-hub-2/artifacts/4qngir0x_nikki%20logo.png" 
                   alt="Success!" 
                   className="w-12 h-12 object-cover rounded-xl"
                 />
-                <div className="text-green-600 text-2xl">👍</div>
-                <div className="text-green-700 font-semibold">{successWord}!</div>
+                <div className="text-white text-3xl drop-shadow-lg">👍</div>
+                <div className="text-white font-black text-lg drop-shadow-lg">{successWord}!</div>
               </div>
             </div>
           )}
 
           {/* Header */}
-          <Card className="bg-white/95 backdrop-blur-sm shadow-lg border-0">
+          <Card className="bg-gradient-to-r from-orange-500 to-amber-500 shadow-2xl border-0 rounded-2xl overflow-hidden game-container">
             <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-2">
-                    <Trophy className="h-5 w-5 text-amber-500" />
-                    <span className="font-semibold">Room: {roomCode}</span>
+              <div className="flex justify-between items-center text-white">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-lg">
+                    <img 
+                      src="https://customer-assets.emergentagent.com/job_wordplay-hub-2/artifacts/4qngir0x_nikki%20logo.png" 
+                      alt="Logo" 
+                      className="w-10 h-10 object-cover rounded-xl"
+                    />
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Clock className="h-5 w-5 text-blue-500" />
-                    <span>Time: {formatTime(timeRemaining)}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Clock className="h-5 w-5 text-gray-500" />
-                    <span>Letters: {lettersOnTable.length}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    {connectionStatus === 'connected' ? 
-                      <Wifi className="h-4 w-4 text-green-500" /> : 
-                      <WifiOff className="h-4 w-4 text-red-500" />
-                    }
+                  <div>
+                    <h1 className="text-2xl font-black drop-shadow-lg">Battle in Progress</h1>
+                    <p className="text-white/80 text-sm font-semibold">{gameWordLength} Letter Words • Room: {roomCode}</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-4">
-                  {players.map((player, index) => (
-                    <div key={index} className="text-right">
-                      <div className="font-semibold text-sm">{player.name}</div>
-                      <div className="text-lg font-bold text-amber-600">{player.score}</div>
+                
+                <div className="text-right">
+                  <div className="flex items-center gap-4 text-white">
+                    <div className="bg-white/20 rounded-xl px-3 py-2 flex items-center gap-2">
+                      <Clock className="h-5 w-5" />
+                      <span className="font-black text-lg">{formatTime(timeRemaining)}</span>
                     </div>
-                  ))}
+                    <div className="bg-white/20 rounded-xl px-3 py-2 flex items-center gap-2">
+                      <div className="h-5 w-5 bg-white/60 rounded-full flex items-center justify-center">
+                        <span className="text-orange-600 text-xs font-black">{lettersOnTable.length}</span>
+                      </div>
+                      <span className="font-semibold">Letters</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          {/* Letter Table */}
-          <Card className="bg-white/95 backdrop-blur-sm shadow-lg border-0">
-            <CardHeader>
-              <CardTitle className="text-center">Letter Table</CardTitle>
-            </CardHeader>
+          {/* Players */}
+          <Card className="bg-white/95 backdrop-blur-lg shadow-xl border-0 rounded-2xl game-container">
+            <CardContent className="p-4">
+              <h2 className="text-lg font-black text-gray-800 mb-3 flex items-center gap-2">
+                <div className="w-3 h-3 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full"></div>
+                Battle Scores
+              </h2>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                {players.map((player, index) => (
+                  <div key={index} className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-3 border-2 border-blue-200 shadow-sm">
+                    <div className="font-black text-gray-800 text-sm">{player.name}</div>
+                    <div className="text-2xl font-black text-blue-600">{player.score}</div>
+                    <div className="text-xs text-gray-600 font-semibold">points</div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Letter Grid */}
+          <Card className="bg-white/95 backdrop-blur-lg shadow-xl border-0 rounded-2xl game-container">
             <CardContent>
-              <div className="grid grid-cols-6 sm:grid-cols-8 md:grid-cols-10 lg:grid-cols-12 gap-3 min-h-[250px] p-6">
+              <div className="grid grid-cols-6 sm:grid-cols-8 md:grid-cols-10 lg:grid-cols-12 gap-3 min-h-[280px] p-6">
                 {lettersOnTable.map((letterObj) => (
                   <button
                     key={letterObj.id}
                     onClick={() => selectLetter(letterObj.id, letterObj.letter)}
-                    className={`aspect-square rounded-xl font-bold text-xl border-3 transition-all duration-200 transform hover:scale-105 flex items-center justify-center min-h-[60px] ${
+                    className={`aspect-square rounded-2xl font-black text-2xl border-3 transition-all duration-200 transform hover:scale-110 flex items-center justify-center min-h-[70px] shadow-lg letter-tile ${
                       selectedLetters.find(l => l.id === letterObj.id)
-                        ? 'bg-amber-500 text-white border-amber-600 scale-95 shadow-lg'
-                        : 'bg-white border-gray-300 hover:border-amber-400 hover:bg-amber-50 shadow-md hover:shadow-lg'
+                        ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white border-white scale-105 shadow-2xl rotate-3'
+                        : 'bg-gradient-to-r from-blue-50 to-white border-blue-300 hover:border-orange-400 hover:bg-gradient-to-r hover:from-orange-50 hover:to-amber-50 text-gray-800'
                     }`}
                   >
                     {letterObj.letter}
@@ -600,7 +622,10 @@ function App() {
                 ))}
                 {lettersOnTable.length === 0 && (
                   <div className="col-span-full flex items-center justify-center h-40 text-gray-500">
-                    Waiting for letters to appear...
+                    <div className="text-center">
+                      <div className="text-4xl mb-2">⏳</div>
+                      <div className="text-lg font-semibold">Preparing letters...</div>
+                    </div>
                   </div>
                 )}
               </div>
@@ -608,43 +633,52 @@ function App() {
           </Card>
 
           {/* Word Formation */}
-          <Card className="bg-white/95 backdrop-blur-sm shadow-lg border-0 game-container">
+          <Card className="bg-gradient-to-r from-indigo-500 to-purple-600 shadow-2xl border-0 rounded-2xl game-container">
             <CardContent className="p-6">
               <div className="space-y-4">
+                <h3 className="text-xl font-black text-white text-center drop-shadow-lg">Your Word</h3>
+                
                 {/* Current word display */}
                 <div className="flex justify-center">
-                  <div className="flex gap-2 min-h-[60px] items-center">
+                  <div className="flex gap-3 min-h-[70px] items-center bg-white/10 rounded-2xl p-4 backdrop-blur-sm">
                     {selectedLetters.map((letter, index) => (
                       <div
                         key={`${letter.id}-${index}`}
-                        className="w-12 h-12 bg-amber-100 border-2 border-amber-300 rounded-lg flex items-center justify-center font-bold text-xl letter-tile"
+                        className="w-14 h-14 bg-gradient-to-r from-white to-gray-100 border-3 border-orange-400 rounded-2xl flex items-center justify-center font-black text-2xl text-gray-800 letter-tile shadow-lg transform rotate-1"
                       >
                         {letter.letter}
                       </div>
                     ))}
                     {selectedLetters.length === 0 && (
-                      <div className="text-gray-400 text-lg">Select letters to form a word...</div>
+                      <div className="text-white/80 text-lg font-semibold">Tap letters to build your word...</div>
                     )}
                   </div>
                 </div>
 
                 {/* Submit and Clear buttons */}
-                <div className="flex gap-3 justify-center">
-                  <Button 
+                <div className="flex gap-4 justify-center">
+                  <button 
                     onClick={submitWord} 
                     disabled={selectedLetters.length !== gameWordLength}
-                    className="px-8 py-2 bg-green-500 hover:bg-green-600 text-white rounded-xl font-semibold"
+                    className={`px-8 py-4 rounded-2xl font-black text-lg shadow-xl transition-all duration-200 transform ${
+                      selectedLetters.length === gameWordLength
+                        ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white hover:scale-105 hover:shadow-2xl'
+                        : 'bg-gray-400 text-gray-600 cursor-not-allowed'
+                    }`}
                   >
-                    Submit
-                  </Button>
-                  <Button 
+                    ⚔️ SUBMIT
+                  </button>
+                  <button 
                     onClick={clearSelection}
-                    variant="outline"
                     disabled={selectedLetters.length === 0}
-                    className="px-8 py-2 border-red-300 text-red-600 hover:bg-red-50 rounded-xl font-semibold"
+                    className={`px-8 py-4 rounded-2xl font-black text-lg shadow-xl transition-all duration-200 transform ${
+                      selectedLetters.length > 0
+                        ? 'bg-gradient-to-r from-red-500 to-pink-500 text-white hover:scale-105 hover:shadow-2xl'
+                        : 'bg-gray-400 text-gray-600 cursor-not-allowed'
+                    }`}
                   >
-                    Clear
-                  </Button>
+                    🗑️ CLEAR
+                  </button>
                 </div>
               </div>
             </CardContent>
