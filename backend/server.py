@@ -183,8 +183,15 @@ class GameState:
         self.letters_on_table = [l for l in self.letters_on_table if l['id'] not in letter_ids]
         self.last_word_time = time.time()
 
-    def calculate_word_score(self, word: str) -> int:
-        return sum(SCRABBLE_SCORES[letter.upper()] for letter in word)
+    def get_time_remaining(self) -> int:
+        """Get remaining time in seconds, returns 0 if game not started"""
+        if not self.game_started or not self.game_start_time:
+            return self.timer_minutes * 60
+        
+        elapsed_seconds = time.time() - self.game_start_time
+        total_seconds = self.timer_minutes * 60
+        remaining_seconds = max(0, total_seconds - elapsed_seconds)
+        return int(remaining_seconds)
 
     def should_end_game(self) -> bool:
         # Game ends if deck is empty, 26 letters on table with 26 seconds timeout, or timer expires
