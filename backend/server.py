@@ -242,6 +242,7 @@ manager = ConnectionManager()
 # Models
 class CreateRoomRequest(BaseModel):
     word_length: int = Field(default=3, ge=3, le=6)
+    timer_minutes: int = Field(default=4, ge=2, le=6)  # 2, 4, or 6 minutes
 
 class JoinRoomRequest(BaseModel):
     room_code: str
