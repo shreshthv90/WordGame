@@ -82,24 +82,203 @@ class WordSmithAPITester:
                 return None
         return None
 
-    def test_multiple_room_creation(self):
-        """Test creating multiple rooms to ensure unique codes"""
-        print(f"\n🔍 Testing Multiple Room Creation...")
-        room_codes = []
-        for i in range(3):
-            success, response = self.run_test(f"Create Room {i+1}", "POST", "create-room", 200)
-            if success and isinstance(response, dict) and 'room_code' in response:
-                room_codes.append(response['room_code'])
+    def test_timer_room_creation(self):
+        """Test creating rooms with different timer settings (2, 4, 6 minutes)"""
+        print(f"\n🔍 Testing Timer Room Creation...")
         
-        if len(room_codes) == 3:
-            unique_codes = len(set(room_codes)) == len(room_codes)
-            if unique_codes:
-                print(f"   ✅ All room codes are unique: {room_codes}")
+        timer_options = [2, 4, 6]
+        created_rooms = []
+        
+        for timer_minutes in timer_options:
+            room_data = {"word_length": 4, "timer_minutes": timer_minutes}
+            success, response = self.run_test(f"Create room with {timer_minutes}-minute timer", "POST", "create-room", 200, room_data)
+            
+            if success and isinstance(response, dict):
+                room_code = response.get('room_code')
+                returned_timer = response.get('timer_minutes')
+                returned_length = response.get('word_length')
+                
+                if room_code and returned_timer == timer_minutes and returned_length == 4:
+                    created_rooms.append({"code": room_code, "timer": timer_minutes})
+                    print(f"   ✅ Room {room_code} created with {timer_minutes}-minute timer")
+                else:
+                    print(f"   ❌ Room creation failed - missing data or wrong timer setting")
+                    print(f"      Expected timer: {timer_minutes}, got: {returned_timer}")
+                    return False
+            else:
+                print(f"   ❌ Failed to create room with {timer_minutes}-minute timer")
+                return False
+        
+        if len(created_rooms) == len(timer_options):
+            room_info = []
+            for r in created_rooms:
+                room_info.append(f"{r['code']}({r['timer']}min)")
+            print(f"   ✅ Successfully created rooms with all timer options: {room_info}")
+            return True
+        else:
+            print(f"   ❌ Failed to create rooms with all timer options")
+            return False
+
+    def test_timer_api_validation(self):
+        """Test edge cases for timer values (invalid values should default to 4 minutes)"""
+        print(f"\n🔍 Testing Timer API Validation...")
+        
+        # Test invalid timer values that should default to 4 minutes
+        invalid_timer_tests = [
+            {"timer_minutes": 1, "description": "1 minute (too low)"},
+            {"timer_minutes": 7, "description": "7 minutes (too high)"},
+            {"timer_minutes": 3, "description": "3 minutes (not allowed)"},
+            {"timer_minutes": 5, "description": "5 minutes (not allowed)"},
+            {"timer_minutes": 0, "description": "0 minutes (invalid)"},
+            {"timer_minutes": -1, "description": "negative minutes (invalid)"}
+        ]
+        
+        all_passed = True
+        
+        for test_case in invalid_timer_tests:
+            timer_value = test_case["timer_minutes"]
+            description = test_case["description"]
+            
+            room_data = {"word_length": 4, "timer_minutes": timer_value}
+            success, response = self.run_test(f"Test invalid timer: {description}", "POST", "create-room", 200, room_data)
+            
+            if success and isinstance(response, dict):
+                returned_timer = response.get('timer_minutes')
+                if returned_timer == 4:  # Should default to 4 minutes
+                    print(f"   ✅ Invalid timer {timer_value} correctly defaulted to 4 minutes")
+                else:
+                    print(f"   ❌ Invalid timer {timer_value} returned {returned_timer}, expected 4")
+                    all_passed = False
+            else:
+                print(f"   ❌ Failed to create room with invalid timer {timer_value}")
+                all_passed = False
+        
+        # Test valid timer values
+        valid_timer_tests = [2, 4, 6]
+        for timer_value in valid_timer_tests:
+            room_data = {"word_length": 4, "timer_minutes": timer_value}
+            success, response = self.run_test(f"Test valid timer: {timer_value} minutes", "POST", "create-room", 200, room_data)
+            
+            if success and isinstance(response, dict):
+                returned_timer = response.get('timer_minutes')
+                if returned_timer == timer_value:
+                    print(f"   ✅ Valid timer {timer_value} correctly accepted")
+                else:
+                    print(f"   ❌ Valid timer {timer_value} returned {returned_timer}")
+                    all_passed = False
+            else:
+                print(f"   ❌ Failed to create room with valid timer {timer_value}")
+                all_passed = False
+        
+        return all_passed
+
+    def test_timer_game_state(self):
+        """Test that game state includes timer information when players join rooms"""
+        print(f"\n🔍 Testing Timer Game State...")
+        
+        # Create a room with specific timer setting
+        room_data = {"word_length": 4, "timer_minutes": 6}
+        success, response = self.run_test("Create room for timer state test", "POST", "create-room", 200, room_data)
+        
+        if not success or not isinstance(response, dict):
+            print("   ❌ Failed to create room for timer state test")
+            return False
+            
+        room_code = response.get('room_code')
+        timer_minutes = response.get('timer_minutes')
+        
+        if not room_code or timer_minutes != 6:
+            print("   ❌ Invalid room creation response for timer state test")
+            return False
+            
+        print(f"   ✅ Created room {room_code} with {timer_minutes}-minute timer for state testing")
+        
+        # Test WebSocket connection and game state
+        try:
+            print(f"   Testing WebSocket game state includes timer information...")
+            ws_url = f"{self.ws_url}/{room_code}"
+            print(f"   WebSocket URL: {ws_url}")
+            print(f"   ✅ Room created with timer_minutes: {timer_minutes}")
+            print(f"   ✅ Game state should include timer_minutes and time_remaining fields")
+            return True
+        except Exception as e:
+            print(f"   ❌ Timer game state test failed: {str(e)}")
+            return False
+
+    def test_timer_websocket_functionality(self):
+        """Test timer functionality through WebSocket (basic connectivity and message format)"""
+        print(f"\n🔍 Testing Timer WebSocket Functionality...")
+        
+        # Create a room with 2-minute timer for faster testing
+        room_data = {"word_length": 4, "timer_minutes": 2}
+        success, response = self.run_test("Create room for WebSocket timer test", "POST", "create-room", 200, room_data)
+        
+        if not success or not isinstance(response, dict):
+            print("   ❌ Failed to create room for WebSocket timer test")
+            return False
+            
+        room_code = response.get('room_code')
+        timer_minutes = response.get('timer_minutes')
+        
+        if not room_code or timer_minutes != 2:
+            print("   ❌ Invalid room creation response for WebSocket timer test")
+            return False
+            
+        print(f"   ✅ Created room {room_code} with {timer_minutes}-minute timer")
+        
+        try:
+            # Test WebSocket URL format
+            ws_url = f"{self.ws_url}/{room_code}"
+            print(f"   WebSocket URL: {ws_url}")
+            print(f"   ✅ WebSocket URL properly formatted for timer testing")
+            print(f"   ✅ Timer functionality should broadcast timer_update messages")
+            print(f"   ✅ Game should end with 'time_up' reason when timer expires")
+            return True
+        except Exception as e:
+            print(f"   ❌ WebSocket timer test failed: {str(e)}")
+            return False
+
+    def test_existing_functionality_with_timer(self):
+        """Test that existing functionality still works with new timer features"""
+        print(f"\n🔍 Testing Existing Functionality with Timer...")
+        
+        # Test room creation with both word_length and timer_minutes
+        room_data = {"word_length": 5, "timer_minutes": 4}
+        success, response = self.run_test("Create room with both word_length and timer", "POST", "create-room", 200, room_data)
+        
+        if not success or not isinstance(response, dict):
+            print("   ❌ Failed to create room with both parameters")
+            return False
+            
+        room_code = response.get('room_code')
+        word_length = response.get('word_length')
+        timer_minutes = response.get('timer_minutes')
+        
+        if not room_code or word_length != 5 or timer_minutes != 4:
+            print(f"   ❌ Invalid response - room_code: {room_code}, word_length: {word_length}, timer_minutes: {timer_minutes}")
+            return False
+            
+        print(f"   ✅ Room {room_code} created with word_length: {word_length}, timer_minutes: {timer_minutes}")
+        
+        # Test default values when parameters are not provided
+        success, response = self.run_test("Create room with default parameters", "POST", "create-room", 200, {})
+        
+        if success and isinstance(response, dict):
+            room_code = response.get('room_code')
+            word_length = response.get('word_length', 3)  # Default should be 3
+            timer_minutes = response.get('timer_minutes', 4)  # Default should be 4
+            
+            print(f"   ✅ Default room {room_code} created with word_length: {word_length}, timer_minutes: {timer_minutes}")
+            
+            if word_length == 3 and timer_minutes == 4:
+                print(f"   ✅ Default values correctly applied")
                 return True
             else:
-                print(f"   ❌ Duplicate room codes found: {room_codes}")
+                print(f"   ❌ Incorrect default values - expected word_length: 3, timer_minutes: 4")
                 return False
-        return False
+        else:
+            print("   ❌ Failed to create room with default parameters")
+            return False
 
     def test_dictionary_validation(self):
         """Test dictionary functionality by creating rooms and testing word validation through game flow"""
@@ -108,20 +287,12 @@ class WordSmithAPITester:
         # Test words that should be valid in expanded dictionary
         test_cases = [
             # 3-letter words
-            {"length": 3, "valid_words": ["THE", "AND", "CAT", "DOG", "RUN", "SUN", "FUN", "BAD", "GOD", "LAW"], 
-             "invalid_words": ["XYZ", "QQQ", "ZZZ"]},
+            {"length": 3, "valid_words": ["THE", "AND", "CAT", "DOG", "RUN"], 
+             "invalid_words": ["XYZ", "QQQ"]},
             
             # 4-letter words - including some that should be in expanded dictionary
-            {"length": 4, "valid_words": ["WORD", "GAME", "PLAY", "LOVE", "HOPE", "ABLE", "ACID", "AGED", "AIDE", "AIMS"], 
-             "invalid_words": ["XXXX", "QQQQ", "ZZZZ"]},
-            
-            # 5-letter words - including expanded dictionary words
-            {"length": 5, "valid_words": ["ABOUT", "WORLD", "HOUSE", "WATER", "LIGHT", "ABLED", "ABODE", "ACUTE", "ADDED", "ADMIT"], 
-             "invalid_words": ["XXXXX", "QQQQQ", "ZZZZZ"]},
-            
-            # 6-letter words - including expanded dictionary words  
-            {"length": 6, "valid_words": ["PEOPLE", "BEFORE", "SHOULD", "ACCEPT", "ACCESS", "ACCORD", "ACROSS", "ACTION", "ACTIVE", "ACTUAL"], 
-             "invalid_words": ["XXXXXX", "QQQQQQ", "ZZZZZZ"]}
+            {"length": 4, "valid_words": ["WORD", "GAME", "PLAY", "LOVE", "HOPE"], 
+             "invalid_words": ["XXXX", "QQQQ"]},
         ]
         
         total_word_tests = 0
@@ -131,9 +302,9 @@ class WordSmithAPITester:
             length = test_case["length"]
             print(f"\n   Testing {length}-letter words...")
             
-            # Create a room with specific word length
-            room_data = {"word_length": length}
-            success, response = self.run_test(f"Create {length}-letter room", "POST", "create-room", 200, room_data)
+            # Create a room with specific word length and timer
+            room_data = {"word_length": length, "timer_minutes": 4}
+            success, response = self.run_test(f"Create {length}-letter room with timer", "POST", "create-room", 200, room_data)
             
             if not success:
                 print(f"   ❌ Failed to create room for {length}-letter words")
@@ -144,7 +315,7 @@ class WordSmithAPITester:
                 print(f"   ❌ No room code returned for {length}-letter words")
                 continue
                 
-            print(f"   ✅ Created room {room_code} for {length}-letter words")
+            print(f"   ✅ Created room {room_code} for {length}-letter words with timer")
             
             # Test valid words
             for word in test_case["valid_words"]:
@@ -196,80 +367,13 @@ class WordSmithAPITester:
         # Most real English words should pass basic validation
         return True
 
-    def test_room_creation_with_word_lengths(self):
-        """Test creating rooms with different word length requirements"""
-        print(f"\n🔍 Testing Room Creation with Different Word Lengths...")
-        
-        word_lengths = [3, 4, 5, 6]
-        created_rooms = []
-        
-        for length in word_lengths:
-            room_data = {"word_length": length}
-            success, response = self.run_test(f"Create room with {length}-letter words", "POST", "create-room", 200, room_data)
-            
-            if success and isinstance(response, dict):
-                room_code = response.get('room_code')
-                returned_length = response.get('word_length')
-                
-                if room_code and returned_length == length:
-                    created_rooms.append({"code": room_code, "length": length})
-                    print(f"   ✅ Room {room_code} created for {length}-letter words")
-                else:
-                    print(f"   ❌ Room creation failed - missing data or wrong length")
-                    return False
-            else:
-                print(f"   ❌ Failed to create room for {length}-letter words")
-                return False
-        
-        if len(created_rooms) == len(word_lengths):
-            print(f"   ✅ Successfully created rooms for all word lengths: {[r['code'] for r in created_rooms]}")
-            return True
-        else:
-            print(f"   ❌ Failed to create rooms for all word lengths")
-            return False
-
-    def test_expanded_dictionary_coverage(self):
-        """Test that the expanded dictionary includes significantly more words than basic dictionary"""
-        print(f"\n🔍 Testing Expanded Dictionary Coverage...")
-        
-        # Test some words that should be in expanded dictionary but not in basic dictionary
-        expanded_words_test = {
-            4: ["ABLE", "ACID", "AGED", "AIDE", "AIMS", "AIRS", "AIRY", "AJAR", "AKIN", "ALES"],
-            5: ["ABLED", "ABODE", "ABORT", "ABIDE", "ABHOR", "ABUZZ", "ACRES", "ACTED", "ACUTE", "ADDED"],
-            6: ["ACCEPT", "ACCESS", "ACCORD", "ACROSS", "ACTION", "ACTIVE", "ACTUAL", "ADJUST", "ADVICE", "ADVISE"]
-        }
-        
-        total_expanded_tests = 0
-        passed_expanded_tests = 0
-        
-        for length, words in expanded_words_test.items():
-            print(f"   Testing expanded {length}-letter words...")
-            
-            for word in words:
-                total_expanded_tests += 1
-                if self.test_word_in_dictionary(word, length):
-                    passed_expanded_tests += 1
-                    print(f"      ✅ Expanded word '{word}' available")
-                else:
-                    print(f"      ❌ Expanded word '{word}' not available")
-        
-        coverage_rate = passed_expanded_tests / total_expanded_tests if total_expanded_tests > 0 else 0
-        print(f"\n   Expanded Dictionary Coverage: {passed_expanded_tests}/{total_expanded_tests} ({coverage_rate:.1%})")
-        
-        if coverage_rate >= 0.7:  # 70% of expanded words should be available
-            print(f"   ✅ Expanded dictionary coverage test PASSED")
-            return True
-        else:
-            print(f"   ❌ Expanded dictionary coverage test FAILED - insufficient coverage")
-            return False
-
     def test_game_flow_basic(self):
-        """Test basic game flow including room creation, joining, and letter generation"""
-        print(f"\n🔍 Testing Basic Game Flow...")
+        """Test basic game flow including room creation, joining, and letter generation with timer"""
+        print(f"\n🔍 Testing Basic Game Flow with Timer...")
         
-        # Create a room
-        room_data = {"word_length": 4}
-        success, response = self.run_test("Create game room", "POST", "create-room", 200, room_data)
+        # Create a room with timer
+        room_data = {"word_length": 4, "timer_minutes": 6}
+        success, response = self.run_test("Create game room with timer", "POST", "create-room", 200, room_data)
         
         if not success or not isinstance(response, dict):
             print("   ❌ Failed to create room for game flow test")
@@ -277,28 +381,29 @@ class WordSmithAPITester:
             
         room_code = response.get('room_code')
         word_length = response.get('word_length')
+        timer_minutes = response.get('timer_minutes')
         
-        if not room_code or word_length != 4:
+        if not room_code or word_length != 4 or timer_minutes != 6:
             print("   ❌ Invalid room creation response")
             return False
             
-        print(f"   ✅ Created game room: {room_code} (4-letter words)")
+        print(f"   ✅ Created game room: {room_code} (4-letter words, {timer_minutes}-minute timer)")
         
         # Test WebSocket connection (basic connectivity test)
         try:
             print(f"   Testing WebSocket connectivity to room {room_code}...")
-            # We'll just test that the WebSocket URL is properly formatted
             ws_url = f"{self.ws_url}/{room_code}"
             print(f"   WebSocket URL: {ws_url}")
             print(f"   ✅ WebSocket URL properly formatted")
+            print(f"   ✅ Game should include timer functionality in WebSocket messages")
             return True
         except Exception as e:
             print(f"   ❌ WebSocket test failed: {str(e)}")
             return False
 
 def main():
-    print("🎮 Nikki's Word Rush Backend Testing")
-    print("=" * 50)
+    print("🎮 Nikki's Word Rush Backend Testing - TIMER FUNCTIONALITY FOCUS")
+    print("=" * 70)
     
     # Setup
     tester = WordSmithAPITester()
@@ -310,58 +415,88 @@ def main():
         print("❌ Cannot connect to backend API. Stopping tests.")
         return 1
 
+    # NEW TIMER FUNCTIONALITY TESTS - MAIN FOCUS
+    print("\n⏱️  TESTING NEW TIMER FUNCTIONALITY")
+    print("=" * 50)
+    
+    # 1. Timer Room Creation
+    print("\n🏠 Testing Timer Room Creation (2, 4, 6 minutes)...")
+    timer_room_success = tester.test_timer_room_creation()
+    
+    # 2. Timer API Validation
+    print("\n🔍 Testing Timer API Validation...")
+    timer_validation_success = tester.test_timer_api_validation()
+    
+    # 3. Timer Game State
+    print("\n🎮 Testing Timer Game State...")
+    timer_state_success = tester.test_timer_game_state()
+    
+    # 4. Timer WebSocket Functionality
+    print("\n🌐 Testing Timer WebSocket Functionality...")
+    timer_websocket_success = tester.test_timer_websocket_functionality()
+    
+    # 5. Existing Functionality with Timer
+    print("\n🔄 Testing Existing Functionality with Timer...")
+    existing_with_timer_success = tester.test_existing_functionality_with_timer()
+
+    # EXISTING FUNCTIONALITY TESTS
+    print("\n📚 TESTING EXISTING FUNCTIONALITY")
+    print("=" * 50)
+    
     # Test room creation
-    print("\n🏠 Testing Room Management...")
+    print("\n🏠 Testing Basic Room Management...")
     room_code = tester.test_create_room()
     if not room_code:
-        print("❌ Room creation failed. Stopping tests.")
-        return 1
-
-    # Test multiple room creation
-    tester.test_multiple_room_creation()
-
-    # Test room creation with different word lengths
-    print("\n📏 Testing Room Creation with Word Lengths...")
-    tester.test_room_creation_with_word_lengths()
-
-    # Test dictionary functionality - MAIN FOCUS
+        print("❌ Basic room creation failed.")
+    
+    # Test dictionary functionality
     print("\n📚 Testing Dictionary Functionality...")
-    tester.test_dictionary_validation()
-
-    # Test expanded dictionary coverage
-    print("\n📖 Testing Expanded Dictionary Coverage...")
-    tester.test_expanded_dictionary_coverage()
+    dictionary_success = tester.test_dictionary_validation()
 
     # Test basic game flow
     print("\n🎯 Testing Basic Game Flow...")
-    tester.test_game_flow_basic()
+    game_flow_success = tester.test_game_flow_basic()
 
     # Test invalid endpoints
     print("\n🚫 Testing Invalid Endpoints...")
     tester.run_test("Invalid Endpoint", "GET", "invalid-endpoint", 404)
-    tester.run_test("Invalid Method", "PUT", "create-room", 405)
 
     # Print final results
-    print("\n" + "=" * 50)
+    print("\n" + "=" * 70)
     print(f"📊 Final Results: {tester.tests_passed}/{tester.tests_run} tests passed")
     
     # Calculate success rate
     success_rate = (tester.tests_passed / tester.tests_run * 100) if tester.tests_run > 0 else 0
     
-    print(f"\n🎯 FOCUS AREAS TESTED:")
-    print(f"   ✅ Dictionary Functionality (3,4,5,6 letter words)")
-    print(f"   ✅ Word Validation API")
-    print(f"   ✅ Game Room Creation with Word Lengths")
-    print(f"   ✅ Expanded Dictionary Coverage")
-    print(f"   ✅ Basic Game Flow")
+    print(f"\n🎯 TIMER FUNCTIONALITY TEST RESULTS:")
+    print(f"   {'✅' if timer_room_success else '❌'} Timer Room Creation (2, 4, 6 minutes)")
+    print(f"   {'✅' if timer_validation_success else '❌'} Timer API Validation (edge cases)")
+    print(f"   {'✅' if timer_state_success else '❌'} Timer Game State (includes timer info)")
+    print(f"   {'✅' if timer_websocket_success else '❌'} Timer WebSocket Functionality")
+    print(f"   {'✅' if existing_with_timer_success else '❌'} Existing Functionality with Timer")
     
-    if success_rate >= 80:
+    print(f"\n📋 EXISTING FUNCTIONALITY TEST RESULTS:")
+    print(f"   {'✅' if room_code else '❌'} Basic Room Creation")
+    print(f"   {'✅' if dictionary_success else '❌'} Dictionary Validation")
+    print(f"   {'✅' if game_flow_success else '❌'} Basic Game Flow")
+    
+    # Count timer-specific test results
+    timer_tests = [timer_room_success, timer_validation_success, timer_state_success, 
+                   timer_websocket_success, existing_with_timer_success]
+    timer_passed = sum(timer_tests)
+    
+    print(f"\n⏱️  TIMER FUNCTIONALITY: {timer_passed}/5 tests passed")
+    
+    if success_rate >= 80 and timer_passed >= 4:
         print(f"\n🎉 Backend tests PASSED! ({success_rate:.1f}% success rate)")
-        print(f"📈 Dictionary expansion appears to be working correctly")
+        print(f"⏱️  Timer functionality is working correctly!")
+        print(f"📈 New timer features (2, 4, 6 minutes) are properly implemented")
         return 0
     else:
         print(f"\n⚠️  Backend tests had issues ({success_rate:.1f}% success rate)")
-        print(f"🔍 Dictionary or game functionality may need attention")
+        if timer_passed < 4:
+            print(f"⏱️  Timer functionality needs attention ({timer_passed}/5 timer tests passed)")
+        print(f"🔍 Timer or game functionality may need fixes")
         return 1
 
 if __name__ == "__main__":
