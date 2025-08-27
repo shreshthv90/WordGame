@@ -121,16 +121,16 @@ backend:
         - comment: "COMPREHENSIVE TESTING COMPLETED: Dictionary expansion is working excellently! Tested 51/52 word validations passed (98% success rate). All expanded dictionary words (30/30) are properly available. Successfully tested 3,4,5,6 letter words including both common and expanded dictionary words. Room creation with different word lengths working perfectly. The dictionary now includes significantly more words than the basic ~971 four-letter words reported by user."
 
   - task: "Timer functionality"
-    implemented: false
-    working: false
+    implemented: true
+    working: "needs_testing"
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
-        - working: false
+        - working: "needs_testing"
         - agent: "main"
-        - comment: "Timer functionality not implemented yet. Need to add 2/4/6 minute timer options selectable by room creator, with game ending when timer expires"
+        - comment: "Implemented timer functionality with 2/4/6 minute options, countdown timer, game ending on timeout, and time remaining broadcasts. Backend changes complete, needs testing."
 
 frontend:
   - task: "Logo integration"
