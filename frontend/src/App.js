@@ -121,12 +121,21 @@ function App() {
         setCurrentWord('');
         break;
         
+      case 'timer_update':
+        setTimeRemaining(message.time_remaining || 0);
+        break;
+        
       case 'game_ended':
         setGameStarted(false);
-        const winner = message.final_scores.reduce((prev, current) => 
+        const winner = message.final_scores?.reduce((prev, current) => 
           prev.score > current.score ? prev : current
         );
-        addMessage(`Game ended! Winner: ${winner.name} with ${winner.score} points!`);
+        const reason = message.reason === 'time_up' ? 'Time is up!' : 'Game ended!';
+        if (winner) {
+          addMessage(`${reason} Winner: ${winner.name} with ${winner.score} points!`);
+        } else {
+          addMessage(reason);
+        }
         break;
         
       default:
