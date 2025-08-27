@@ -262,9 +262,13 @@ async def create_room(request: CreateRoomRequest = None):
     if request is None:
         request = CreateRoomRequest()
     
+    # Validate timer_minutes - only allow 2, 4, or 6 minutes
+    if request.timer_minutes not in [2, 4, 6]:
+        request.timer_minutes = 4  # Default to 4 minutes if invalid
+    
     room_code = ''.join(random.choices('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', k=6))
-    games[room_code] = GameState(room_code, request.word_length)
-    return {"room_code": room_code, "word_length": request.word_length}
+    games[room_code] = GameState(room_code, request.word_length, request.timer_minutes)
+    return {"room_code": room_code, "word_length": request.word_length, "timer_minutes": request.timer_minutes}
 
 # WebSocket endpoint (must be on main app, not router)
 @app.websocket("/api/ws/{room_code}")
