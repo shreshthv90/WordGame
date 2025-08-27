@@ -587,19 +587,59 @@ async def websocket_endpoint(websocket: WebSocket, room_code: str):
             if message["type"] == "join":
                 player_name = message["player_name"]
                 websocket_id = str(id(websocket))
-                game.players[websocket_id] = {"name": player_name, "score": 0}
+                
+                # Try to get user from session token if provided
+                session_token = message.get("session_token")
+                user = None
+                if session_token:
+                    try:
+                        # Check session validity
+                        session = await sessions_collection.find_one({
+                            "session_token": session_token,
+                            "expires_at": {"$gt": datetime.utcnow()}
+                        })
+                        if session:
+                            user_data = await users_collection.find_one({"id": session["user_id"]})
+                            if user_data:
+                                user = User(**user_data)
+                                player_name = user.name  # Use authenticated name
+                    except Exception as e:
+                        print(f"Authentication error: {e}")
+                
+                game.players[websocket_id] = {
+                    "name": player_name, 
+                    "score": 0,
+                    "user": user,  # Store user object for ELO tracking
+                    "elo_rating": user.elo_rating if user else None
+                }
                 
                 await manager.broadcast_to_room({
                     "type": "player_joined",
                     "player_name": player_name,
-                    "players": list(game.players.values())
+                    "players": [
+                        {
+                            "name": p["name"],
+                            "score": p["score"],
+                            "elo_rating": p.get("elo_rating"),
+                            "is_authenticated": p.get("user") is not None
+                        }
+                        for p in game.players.values()
+                    ]
                 }, room_code)
                 
                 # Send current game state to new player
                 await websocket.send_text(json.dumps({
                     "type": "game_state",
                     "letters": game.letters_on_table,
-                    "players": list(game.players.values()),
+                    "players": [
+                        {
+                            "name": p["name"],
+                            "score": p["score"],
+                            "elo_rating": p.get("elo_rating"),
+                            "is_authenticated": p.get("user") is not None
+                        }
+                        for p in game.players.values()
+                    ],
                     "game_started": game.game_started,
                     "word_length": game.word_length,
                     "timer_minutes": game.timer_minutes,
@@ -637,7 +677,15 @@ async def websocket_endpoint(websocket: WebSocket, room_code: str):
                         "player": game.players[player_id]["name"],
                         "score": score,
                         "letters": game.letters_on_table,
-                        "players": list(game.players.values())
+                        "players": [
+                            {
+                                "name": p["name"],
+                                "score": p["score"],
+                                "elo_rating": p.get("elo_rating"),
+                                "is_authenticated": p.get("user") is not None
+                            }
+                            for p in game.players.values()
+                        ]
                     }, room_code)
                 else:
                     await websocket.send_text(json.dumps({
