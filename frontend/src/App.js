@@ -472,22 +472,22 @@ function App() {
               <CardTitle className="text-center">Letter Table</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-8 sm:grid-cols-10 md:grid-cols-12 lg:grid-cols-14 gap-2 min-h-[200px] p-4">
+              <div className="grid grid-cols-6 sm:grid-cols-8 md:grid-cols-10 lg:grid-cols-12 gap-3 min-h-[250px] p-6">
                 {lettersOnTable.map((letterObj) => (
                   <button
                     key={letterObj.id}
                     onClick={() => selectLetter(letterObj.id, letterObj.letter)}
-                    className={`aspect-square rounded-lg font-bold text-lg border-2 transition-all duration-200 transform hover:scale-105 flex items-center justify-center ${
+                    className={`aspect-square rounded-xl font-bold text-xl border-3 transition-all duration-200 transform hover:scale-105 flex items-center justify-center min-h-[60px] ${
                       selectedLetters.find(l => l.id === letterObj.id)
-                        ? 'bg-amber-500 text-white border-amber-600 scale-95'
-                        : 'bg-white border-gray-300 hover:border-amber-400 hover:bg-amber-50'
+                        ? 'bg-amber-500 text-white border-amber-600 scale-95 shadow-lg'
+                        : 'bg-white border-gray-300 hover:border-amber-400 hover:bg-amber-50 shadow-md hover:shadow-lg'
                     }`}
                   >
                     {letterObj.letter}
                   </button>
                 ))}
                 {lettersOnTable.length === 0 && (
-                  <div className="col-span-full flex items-center justify-center h-32 text-gray-500">
+                  <div className="col-span-full flex items-center justify-center h-40 text-gray-500">
                     Waiting for letters to appear...
                   </div>
                 )}
