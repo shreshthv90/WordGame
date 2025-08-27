@@ -371,6 +371,9 @@ function App() {
               <div className="flex items-center gap-2 text-sm bg-blue-50 py-2 px-3 rounded-lg">
                 <span className="font-medium text-blue-700">Word Length: {gameWordLength}</span>
               </div>
+              <div className="flex items-center gap-2 text-sm bg-green-50 py-2 px-3 rounded-lg">
+                <span className="font-medium text-green-700">Timer: {gameTimerMinutes} minutes</span>
+              </div>
               <div className="flex items-center gap-2">
                 {connectionStatus === 'connected' ? 
                   <Wifi className="h-5 w-5 text-green-500" /> : 
