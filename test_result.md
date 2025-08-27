@@ -172,6 +172,30 @@ frontend:
         - agent: "main"
         - comment: "Added timer selection UI (2/4/6 minutes) in room creation, timer display in lobby and gameplay, countdown formatting, and timer update handling. Frontend changes complete."
 
+  - task: "Rules section with letter points"
+    implemented: true
+    working: "needs_testing"
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+        - working: "needs_testing"
+        - agent: "main"
+        - comment: "Added toggleable rules section showing Scrabble letter point values and how to play instructions. Available in both menu and playing screens."
+
+  - task: "Success animation with logo and thumbs up"
+    implemented: true
+    working: "needs_testing"
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+        - working: "needs_testing"
+        - agent: "main"
+        - comment: "Added success animation that appears on the right side when words are accepted. Shows small logo + thumbs up emoji + word text with bounce animation for 2 seconds without disrupting gameplay."
+
 metadata:
   created_by: "main_agent"
   version: "1.0"
