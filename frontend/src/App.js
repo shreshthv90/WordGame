@@ -13,9 +13,11 @@ const API = `${BACKEND_URL}/api`;
 const WS_URL = BACKEND_URL.replace('https://', 'wss://').replace('http://', 'ws://');
 
 function App() {
-  const [gameState, setGameState] = useState('menu'); // 'menu', 'lobby', 'playing'
+  const [gameState, setGameState] = useState('menu'); // 'menu', 'lobby', 'playing', 'profile'
   const [roomCode, setRoomCode] = useState('');
   const [playerName, setPlayerName] = useState('');
+  const [currentUser, setCurrentUser] = useState(null); // Authenticated user data
+  const [sessionToken, setSessionToken] = useState(null); // Session token for API calls
   const [selectedWordLength, setSelectedWordLength] = useState(3); // New: word length setting
   const [selectedTimerMinutes, setSelectedTimerMinutes] = useState(4); // New: timer setting (2, 4, or 6 minutes)
   const [gameWordLength, setGameWordLength] = useState(3); // Current game's word length requirement
