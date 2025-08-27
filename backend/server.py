@@ -551,7 +551,7 @@ async def root():
     return {"message": "WordSmith Game Server"}
 
 @api_router.post("/create-room")
-async def create_room(request: CreateRoomRequest = None):
+async def create_room(request: CreateRoomRequest = None, current_user: Optional[User] = Depends(get_optional_user)):
     if request is None:
         request = CreateRoomRequest()
     
@@ -560,8 +560,14 @@ async def create_room(request: CreateRoomRequest = None):
         request.timer_minutes = 4  # Default to 4 minutes if invalid
     
     room_code = ''.join(random.choices('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', k=6))
-    games[room_code] = GameState(room_code, request.word_length, request.timer_minutes)
-    return {"room_code": room_code, "word_length": request.word_length, "timer_minutes": request.timer_minutes}
+    games[room_code] = GameState(room_code, request.word_length, request.timer_minutes, current_user)
+    
+    return {
+        "room_code": room_code, 
+        "word_length": request.word_length, 
+        "timer_minutes": request.timer_minutes,
+        "creator": current_user.name if current_user else "Anonymous"
+    }
 
 # WebSocket endpoint (must be on main app, not router)
 @app.websocket("/api/ws/{room_code}")
