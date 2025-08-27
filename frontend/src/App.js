@@ -17,7 +17,10 @@ function App() {
   const [roomCode, setRoomCode] = useState('');
   const [playerName, setPlayerName] = useState('');
   const [selectedWordLength, setSelectedWordLength] = useState(3); // New: word length setting
+  const [selectedTimerMinutes, setSelectedTimerMinutes] = useState(4); // New: timer setting (2, 4, or 6 minutes)
   const [gameWordLength, setGameWordLength] = useState(3); // Current game's word length requirement
+  const [gameTimerMinutes, setGameTimerMinutes] = useState(4); // Current game's timer setting
+  const [timeRemaining, setTimeRemaining] = useState(0); // Time remaining in seconds
   const [players, setPlayers] = useState([]);
   const [lettersOnTable, setLettersOnTable] = useState([]);
   const [selectedLetters, setSelectedLetters] = useState([]);
