@@ -438,6 +438,44 @@ function App() {
 
               {/* Action Buttons */}
               <div className="space-y-4">
+                {/* Authentication Section */}
+                {currentUser ? (
+                  <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl p-4 border-2 border-purple-200">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center shadow-lg overflow-hidden">
+                          {currentUser.picture ? (
+                            <img 
+                              src={currentUser.picture} 
+                              alt="Profile" 
+                              className="w-9 h-9 object-cover rounded-full"
+                            />
+                          ) : (
+                            <span className="text-white font-black text-xs">⚔️</span>
+                          )}
+                        </div>
+                        <div>
+                          <div className="font-black text-gray-800 text-sm">{currentUser.name}</div>
+                          <div className="text-xs text-purple-600 font-semibold">ELO: {currentUser.elo_rating}</div>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => setGameState('profile')}
+                        className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-2 rounded-xl font-black text-sm hover:scale-105 transition-all shadow-lg"
+                      >
+                        View Profile
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <button
+                    onClick={handleLogin}
+                    className="w-full bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 hover:from-purple-600 hover:via-pink-600 hover:to-red-600 text-white font-black py-4 text-lg rounded-2xl shadow-xl transform hover:scale-105 transition-all duration-200"
+                  >
+                    🏆 Login for ELO Ranking
+                  </button>
+                )}
+
                 <Button 
                   onClick={createRoom} 
                   className="w-full bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-500 hover:from-orange-600 hover:via-amber-600 hover:to-yellow-600 text-white font-black py-4 text-lg rounded-2xl shadow-xl transform hover:scale-105 transition-all duration-200"
