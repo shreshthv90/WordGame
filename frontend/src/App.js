@@ -54,6 +54,69 @@ function App() {
     }, 2000); // Hide after 2 seconds
   };
 
+  // Authentication Functions
+  const handleLogin = () => {
+    const redirectUrl = encodeURIComponent(window.location.origin + '/#/profile');
+    window.location.href = `https://auth.emergentagent.com/?redirect=${redirectUrl}`;
+  };
+
+  const handleLogout = async () => {
+    try {
+      await axios.post(`${API}/auth/logout`, {}, { withCredentials: true });
+      setCurrentUser(null);
+      setSessionToken(null);
+      setPlayerName('');
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
+
+  const checkAuthStatus = async () => {
+    try {
+      const response = await axios.get(`${API}/auth/me`, { withCredentials: true });
+      setCurrentUser(response.data);
+      setPlayerName(response.data.name);
+      return response.data;
+    } catch (error) {
+      setCurrentUser(null);
+      setSessionToken(null);
+      return null;
+    }
+  };
+
+  // Handle OAuth redirect with session ID
+  useEffect(() => {
+    const handleAuthRedirect = async () => {
+      const hash = window.location.hash;
+      const sessionMatch = hash.match(/session_id=([^&]+)/);
+      
+      if (sessionMatch) {
+        const sessionId = sessionMatch[1];
+        try {
+          const response = await axios.post(`${API}/auth/profile?session_id=${sessionId}`, {}, {
+            withCredentials: true
+          });
+          
+          if (response.data.success) {
+            setCurrentUser(response.data.user);
+            setPlayerName(response.data.user.name);
+            setGameState('profile');
+            
+            // Clean up URL
+            window.history.replaceState({}, document.title, window.location.pathname);
+          }
+        } catch (error) {
+          console.error('Authentication error:', error);
+        }
+      } else {
+        // Check if already authenticated
+        await checkAuthStatus();
+      }
+    };
+
+    handleAuthRedirect();
+  }, []);
+
   // Scrabble letter scores for rules display
   const letterScores = {
     1: ['A', 'E', 'I', 'O', 'U', 'L', 'N', 'S', 'T', 'R'],
