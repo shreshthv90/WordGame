@@ -20,10 +20,44 @@ from dictionary import is_valid_word, get_words_by_length, ALL_WORDS
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
-# MongoDB connection
-mongo_url = os.environ['MONGO_URL']
-client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ['DB_NAME']]
+# Database setup
+MONGO_URL = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
+client = AsyncIOMotorClient(MONGO_URL)
+db = client.word_rush_db
+users_collection = db.users
+sessions_collection = db.sessions
+game_history_collection = db.game_history
+
+# Authentication Models
+class User(BaseModel):
+    id: str
+    email: str
+    name: str
+    picture: str
+    created_at: datetime
+    total_games: int = 0
+    total_wins: int = 0
+    total_score: int = 0
+    elo_rating: int = 1000  # Starting ELO rating
+
+class Session(BaseModel):
+    session_token: str
+    user_id: str
+    expires_at: datetime
+    created_at: datetime
+
+class GameHistoryEntry(BaseModel):
+    game_id: str
+    user_id: str
+    room_code: str
+    final_score: int
+    placement: int  # 1st, 2nd, 3rd, etc.
+    word_length: int
+    timer_minutes: int
+    opponent_count: int
+    elo_change: int
+    new_elo_rating: int
+    played_at: datetime
 
 # Create the main app
 app = FastAPI()
