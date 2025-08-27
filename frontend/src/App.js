@@ -271,20 +271,18 @@ function App() {
   if (gameState === 'menu') {
     return (
       <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-red-50 flex items-center justify-center p-4">
-        <Card className="w-full max-w-md shadow-2xl border-0 bg-white/95 backdrop-blur-sm">
+        <Card className="w-full max-w-md shadow-2xl border-0 bg-white/95 backdrop-blur-sm game-container">
           <CardHeader className="text-center pb-2">
-            <div className="mx-auto w-20 h-20 bg-gradient-to-br from-amber-500 to-orange-600 rounded-2xl flex items-center justify-center mb-4 overflow-hidden">
+            <div className="mx-auto w-32 h-32 bg-gradient-to-br from-amber-500 to-orange-600 rounded-2xl flex items-center justify-center mb-6 overflow-hidden">
               <img 
                 src="https://customer-assets.emergentagent.com/job_wordplay-hub-2/artifacts/4qngir0x_nikki%20logo.png" 
                 alt="Nikki's Logo" 
-                className="w-16 h-16 object-cover rounded-xl"
+                className="w-28 h-28 object-cover rounded-xl"
               />
             </div>
-            <CardTitle className="text-3xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">
+            <CardTitle className="text-4xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent mb-6">
               Nikki's Word Rush
             </CardTitle>
-            <p className="text-gray-600 text-sm">Multiplayer Word Racing Game</p>
-            <p className="text-xs text-gray-500 mt-1">Form words with 3-6 letters to score points!</p>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="space-y-3">
