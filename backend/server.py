@@ -130,9 +130,11 @@ games: Dict[str, dict] = {}
 connections: Dict[str, List[WebSocket]] = {}
 
 class GameState:
-    def __init__(self, room_code: str, word_length: int = 3):
+    def __init__(self, room_code: str, word_length: int = 3, timer_minutes: int = 4):
         self.room_code = room_code
         self.word_length = word_length  # Required word length for this game
+        self.timer_minutes = timer_minutes  # Game timer in minutes (2, 4, or 6)
+        self.game_start_time = None  # When the game actually started
         self.players = {}  # {websocket_id: {"name": str, "score": int}}
         self.letters_on_table = []  # List of available letters
         self.deck = self._create_deck()
