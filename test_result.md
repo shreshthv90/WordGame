@@ -134,16 +134,16 @@ backend:
 
 frontend:
   - task: "Logo integration"
-    implemented: false
-    working: false
+    implemented: true
+    working: "needs_testing"
     file: "/app/frontend/src/App.js"
     stuck_count: 0
     priority: "medium"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
-        - working: false
+        - working: "needs_testing"
         - agent: "main"
-        - comment: "Logo provided by user but not yet integrated into the game interface"
+        - comment: "Integrated Nikki's logo into the game interface header, replacing the generic icon. Logo displays in menu screen."
 
   - task: "Make tiles bigger"
     implemented: false
