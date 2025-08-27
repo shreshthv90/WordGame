@@ -193,6 +193,9 @@ class GameState:
         remaining_seconds = max(0, total_seconds - elapsed_seconds)
         return int(remaining_seconds)
 
+    def calculate_word_score(self, word: str) -> int:
+        return sum(SCRABBLE_SCORES[letter.upper()] for letter in word)
+
     def should_end_game(self) -> bool:
         # Game ends if deck is empty, 26 letters on table with 26 seconds timeout, or timer expires
         if not self.deck:
