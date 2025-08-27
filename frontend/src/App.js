@@ -90,6 +90,8 @@ function App() {
         setPlayers(message.players);
         setGameStarted(message.game_started);
         setGameWordLength(message.word_length || 3); // Set game's word length requirement
+        setGameTimerMinutes(message.timer_minutes || 4); // Set game's timer setting
+        setTimeRemaining(message.time_remaining || 0); // Set current time remaining
         break;
         
       case 'game_started':
