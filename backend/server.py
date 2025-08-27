@@ -189,6 +189,41 @@ async def logout(response: Response, session_token: Optional[str] = Cookie(None)
     response.delete_cookie(key="session_token", path="/")
     return {"success": True}
 
+@api_router.get("/profile/{user_id}")
+async def get_user_profile(user_id: str, current_user: Optional[User] = Depends(get_optional_user)):
+    """Get user profile by ID"""
+    user = await users_collection.find_one({"id": user_id})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Get recent game history
+    recent_games = await game_history_collection.find(
+        {"user_id": user_id}
+    ).sort("played_at", -1).limit(10).to_list(10)
+    
+    profile_data = {
+        "user": User(**user),
+        "recent_games": recent_games,
+        "is_own_profile": current_user and current_user.id == user_id
+    }
+    
+    return profile_data
+
+@api_router.get("/leaderboard")
+async def get_leaderboard(limit: int = 50):
+    """Get global leaderboard by ELO rating"""
+    leaders = await users_collection.find().sort("elo_rating", -1).limit(limit).to_list(limit)
+    
+    leaderboard = []
+    for i, user in enumerate(leaders):
+        leaderboard.append({
+            "rank": i + 1,
+            "user": User(**user),
+            "win_rate": user["total_wins"] / max(user["total_games"], 1) * 100 if user["total_games"] > 0 else 0
+        })
+    
+    return leaderboard
+
 # Scrabble tile distribution
 SCRABBLE_TILES = {
     'A': 9, 'B': 2, 'C': 2, 'D': 4, 'E': 12, 'F': 2, 'G': 3, 'H': 2,
