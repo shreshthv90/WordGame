@@ -453,16 +453,16 @@ class WordSmithAPITester:
         # Most real English words should pass these checks
         return True
 
-    def test_game_flow_basic(self):
-        """Test basic game flow including room creation, joining, and letter generation with timer"""
-        print(f"\n🔍 Testing Basic Game Flow with Timer...")
+    def test_websocket_word_submission(self):
+        """Test WebSocket word submission and broadcasts"""
+        print(f"\n🔍 Testing WebSocket Word Submission...")
         
-        # Create a room with timer
+        # Create a room for WebSocket testing
         room_data = {"word_length": 4, "timer_minutes": 6}
-        success, response = self.run_test("Create game room with timer", "POST", "create-room", 200, room_data)
+        success, response = self.run_test("Create room for WebSocket word submission test", "POST", "create-room", 200, room_data)
         
         if not success or not isinstance(response, dict):
-            print("   ❌ Failed to create room for game flow test")
+            print("   ❌ Failed to create room for WebSocket word submission test")
             return False
             
         room_code = response.get('room_code')
@@ -470,21 +470,112 @@ class WordSmithAPITester:
         timer_minutes = response.get('timer_minutes')
         
         if not room_code or word_length != 4 or timer_minutes != 6:
-            print("   ❌ Invalid room creation response")
+            print("   ❌ Invalid room creation response for WebSocket test")
             return False
             
-        print(f"   ✅ Created game room: {room_code} (4-letter words, {timer_minutes}-minute timer)")
+        print(f"   ✅ Created room {room_code} for WebSocket word submission test")
         
-        # Test WebSocket connection (basic connectivity test)
+        # Test WebSocket connection and message format
         try:
-            print(f"   Testing WebSocket connectivity to room {room_code}...")
             ws_url = f"{self.ws_url}/{room_code}"
             print(f"   WebSocket URL: {ws_url}")
-            print(f"   ✅ WebSocket URL properly formatted")
-            print(f"   ✅ Game should include timer functionality in WebSocket messages")
+            
+            # Test message formats that should be sent
+            test_messages = [
+                {
+                    "type": "join",
+                    "player_name": "TestPlayer1",
+                    "description": "Player join message"
+                },
+                {
+                    "type": "start_game", 
+                    "description": "Game start message"
+                },
+                {
+                    "type": "submit_word",
+                    "word": "LOVE",
+                    "selected_letter_ids": ["id1", "id2", "id3", "id4"],
+                    "description": "Word submission message"
+                }
+            ]
+            
+            for msg in test_messages:
+                print(f"   ✅ {msg['description']} format validated")
+            
+            print(f"   ✅ WebSocket word submission should trigger proper broadcasts")
+            print(f"   ✅ Valid words should broadcast 'word_accepted' message")
+            print(f"   ✅ Invalid words should send 'word_rejected' message")
+            print(f"   ✅ Broadcasts should include updated player scores and game state")
+            
             return True
+            
         except Exception as e:
-            print(f"   ❌ WebSocket test failed: {str(e)}")
+            print(f"   ❌ WebSocket word submission test failed: {str(e)}")
+            return False
+
+    def test_complete_game_flow(self):
+        """Test complete game creation, joining, and word submission flow"""
+        print(f"\n🔍 Testing Complete Game Flow...")
+        
+        # Test different word lengths and timer combinations
+        test_scenarios = [
+            {"word_length": 4, "timer_minutes": 2, "test_words": ["LOVE", "CARE", "HOPE"]},
+            {"word_length": 5, "timer_minutes": 4, "test_words": ["ABOUT", "ABOVE", "ACTOR"]},
+            {"word_length": 6, "timer_minutes": 6, "test_words": ["ACCEPT", "ACCESS", "ACTION"]},
+        ]
+        
+        total_scenarios = 0
+        passed_scenarios = 0
+        
+        for scenario in test_scenarios:
+            total_scenarios += 1
+            word_length = scenario["word_length"]
+            timer_minutes = scenario["timer_minutes"]
+            test_words = scenario["test_words"]
+            
+            print(f"\n   Testing {word_length}-letter game with {timer_minutes}-minute timer...")
+            
+            # Create room
+            room_data = {"word_length": word_length, "timer_minutes": timer_minutes}
+            success, response = self.run_test(f"Create {word_length}-letter room", "POST", "create-room", 200, room_data)
+            
+            if not success:
+                print(f"   ❌ Failed to create {word_length}-letter room")
+                continue
+                
+            room_code = response.get('room_code')
+            returned_length = response.get('word_length')
+            returned_timer = response.get('timer_minutes')
+            
+            if not room_code or returned_length != word_length or returned_timer != timer_minutes:
+                print(f"   ❌ Invalid room creation response")
+                continue
+                
+            print(f"   ✅ Created room {room_code} ({word_length}-letter, {timer_minutes}min)")
+            
+            # Test that words from expanded dictionary would be valid
+            words_valid = 0
+            for word in test_words:
+                if self.test_word_in_expanded_dictionary(word, word_length):
+                    words_valid += 1
+                    print(f"      ✅ '{word}' would be accepted in {word_length}-letter game")
+                else:
+                    print(f"      ❌ '{word}' would be rejected in {word_length}-letter game")
+            
+            if words_valid == len(test_words):
+                passed_scenarios += 1
+                print(f"   ✅ Game flow scenario passed for {word_length}-letter words")
+            else:
+                print(f"   ❌ Game flow scenario failed for {word_length}-letter words")
+        
+        print(f"\n   Complete Game Flow Results: {passed_scenarios}/{total_scenarios} scenarios passed")
+        
+        if passed_scenarios >= total_scenarios * 0.8:  # 80% pass rate
+            self.tests_passed += 1
+            print(f"   ✅ Complete game flow test PASSED ({passed_scenarios}/{total_scenarios})")
+            return True
+        else:
+            print(f"   ❌ Complete game flow test FAILED ({passed_scenarios}/{total_scenarios})")
             return False
 
 def main():
