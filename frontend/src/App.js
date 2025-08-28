@@ -716,16 +716,16 @@ function App() {
 
   if (gameState === 'playing') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-400 via-indigo-500 to-purple-600 p-4 relative overflow-hidden">
+      <div className="min-h-screen bg-gradient-to-br from-blue-400 via-indigo-500 to-purple-600 p-2 relative overflow-hidden">
         {/* Animated background elements */}
         <div className="absolute inset-0 opacity-5">
           <div className="absolute top-20 left-20 w-40 h-40 bg-orange-300 rounded-full blur-2xl animate-pulse"></div>
           <div className="absolute bottom-20 right-20 w-32 h-32 bg-yellow-300 rounded-full blur-xl animate-bounce delay-1000"></div>
         </div>
         
-        <div className="relative z-10 max-w-6xl mx-auto space-y-4">
+        <div className="relative z-10 max-w-6xl mx-auto space-y-3">
           
-          {/* Personal Success Animation - Positioned on the right side */}
+          {/* Personal Success Animation - Right side */}
           {showSuccessAnimation && (
             <div className="fixed top-4 right-4 z-50 animate-bounce">
               <div className="bg-gradient-to-r from-green-400 to-emerald-500 rounded-2xl p-4 shadow-2xl border-3 border-white flex items-center gap-3">
@@ -767,70 +767,56 @@ function App() {
             </div>
           )}
 
-          {/* Header */}
-          <Card className="bg-gradient-to-r from-orange-500 to-amber-500 shadow-2xl border-0 rounded-2xl overflow-hidden game-container">
-            <CardContent className="p-4">
+          {/* Compact Header */}
+          <Card className="bg-gradient-to-r from-orange-500 to-amber-500 shadow-xl border-0 rounded-xl game-container">
+            <CardContent className="p-3">
               <div className="flex justify-between items-center text-white">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-lg">
+                <div className="flex items-center gap-4">
+                  <div className="w-8 h-8 bg-white rounded-xl flex items-center justify-center shadow-lg">
                     <img 
                       src="https://customer-assets.emergentagent.com/job_wordplay-hub-2/artifacts/4qngir0x_nikki%20logo.png" 
                       alt="Logo" 
-                      className="w-10 h-10 object-cover rounded-xl"
+                      className="w-7 h-7 object-cover rounded-lg"
                     />
                   </div>
-                  <div>
-                    <h1 className="text-2xl font-black drop-shadow-lg">Battle in Progress</h1>
-                    <p className="text-white/80 text-sm font-semibold">{gameWordLength} Letter Words • Room: {roomCode}</p>
+                  <div className="text-sm">
+                    <span className="font-black">Room: {roomCode}</span> • <span className="font-semibold">{gameWordLength} Letters</span>
                   </div>
                 </div>
                 
-                <div className="text-right">
-                  <div className="flex items-center gap-4 text-white">
-                    <div className="bg-white/20 rounded-xl px-3 py-2 flex items-center gap-2">
-                      <Clock className="h-5 w-5" />
-                      <span className="font-black text-lg">{formatTime(timeRemaining)}</span>
-                    </div>
-                    <div className="bg-white/20 rounded-xl px-3 py-2 flex items-center gap-2">
-                      <div className="h-5 w-5 bg-white/60 rounded-full flex items-center justify-center">
-                        <span className="text-orange-600 text-xs font-black">{lettersOnTable.length}</span>
-                      </div>
-                      <span className="font-semibold">Letters</span>
-                    </div>
-                  </div>
+                <div className="bg-white/20 rounded-xl px-3 py-1 flex items-center gap-2">
+                  <Clock className="h-4 w-4" />
+                  <span className="font-black text-lg">{formatTime(timeRemaining)}</span>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          {/* Players */}
-          <Card className="bg-white/95 backdrop-blur-lg shadow-xl border-0 rounded-2xl game-container">
-            <CardContent className="p-4">
-              <h2 className="text-lg font-black text-gray-800 mb-3 flex items-center gap-2">
-                <div className="w-3 h-3 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full"></div>
-                Battle Scores
-              </h2>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          {/* Compact Players Scores */}
+          <Card className="bg-white/95 backdrop-blur-lg shadow-lg border-0 rounded-xl game-container">
+            <CardContent className="p-3">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                 {players.map((player, index) => (
-                  <div key={index} className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-3 border-2 border-blue-200 shadow-sm">
-                    <div className="font-black text-gray-800 text-sm">{player.name}</div>
-                    <div className="text-2xl font-black text-blue-600">{player.score}</div>
-                    <div className="text-xs text-gray-600 font-semibold">points</div>
+                  <div key={index} className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-2 border border-blue-200 text-center">
+                    <div className="font-black text-gray-800 text-xs truncate">{player.name}</div>
+                    <div className="text-lg font-black text-blue-600">{player.score}</div>
                   </div>
                 ))}
               </div>
             </CardContent>
           </Card>
 
-          {/* Letter Grid */}
+          {/* Main Game Area - Letters + Word Formation + Buttons All Together */}
           <Card className="bg-white/95 backdrop-blur-lg shadow-xl border-0 rounded-2xl game-container">
-            <CardContent>
-              <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-4 min-h-[350px] p-8">
+            <CardContent className="p-6 space-y-6">
+              
+              {/* Letter Grid */}
+              <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-3 min-h-[320px] justify-items-center">
                 {lettersOnTable.map((letterObj) => (
                   <button
                     key={letterObj.id}
                     onClick={() => selectLetter(letterObj.id, letterObj.letter)}
-                    className={`aspect-square rounded-2xl font-black text-4xl border-4 transition-all duration-200 transform hover:scale-110 flex items-center justify-center min-h-[100px] shadow-xl letter-tile ${
+                    className={`aspect-square rounded-2xl font-black text-3xl border-4 transition-all duration-200 transform hover:scale-110 flex items-center justify-center w-16 h-16 md:w-20 md:h-20 shadow-xl letter-tile ${
                       selectedLetters.find(l => l.id === letterObj.id)
                         ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white border-white scale-105 shadow-2xl rotate-3'
                         : 'bg-gradient-to-r from-blue-50 to-white border-blue-300 hover:border-orange-400 hover:bg-gradient-to-r hover:from-orange-50 hover:to-amber-50 text-gray-800'
@@ -843,72 +829,62 @@ function App() {
                   <div className="col-span-full flex items-center justify-center h-40 text-gray-500">
                     <div className="text-center">
                       <div className="text-4xl mb-2">⏳</div>
-                      <div className="text-lg font-semibold">Preparing letters...</div>
+                      <div className="text-lg font-semibold">Starting game...</div>
                     </div>
                   </div>
                 )}
               </div>
-            </CardContent>
-          </Card>
 
-          {/* Word Formation */}
-          <Card className="bg-gradient-to-r from-indigo-500 to-purple-600 shadow-2xl border-0 rounded-2xl game-container">
-            <CardContent className="p-6">
-              <div className="space-y-6">
-                <h3 className="text-xl font-black text-white text-center drop-shadow-lg">Your Word</h3>
-                
-                {/* Current word display */}
-                <div className="flex justify-center">
-                  <div className="flex gap-3 min-h-[80px] items-center bg-white/10 rounded-2xl p-4 backdrop-blur-sm">
-                    {selectedLetters.map((letter, index) => (
-                      <div
-                        key={`${letter.id}-${index}`}
-                        className="w-16 h-16 bg-gradient-to-r from-white to-gray-100 border-3 border-orange-400 rounded-2xl flex items-center justify-center font-black text-3xl text-gray-800 letter-tile shadow-lg transform rotate-1"
-                      >
-                        {letter.letter}
-                      </div>
-                    ))}
-                    {selectedLetters.length === 0 && (
-                      <div className="text-white/80 text-lg font-semibold">Tap letters to build your word...</div>
-                    )}
-                  </div>
+              {/* Current Word Display - Compact */}
+              <div className="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl p-4 text-center">
+                <div className="flex justify-center gap-2 mb-3 min-h-[50px] items-center">
+                  {selectedLetters.map((letter, index) => (
+                    <div
+                      key={`${letter.id}-${index}`}
+                      className="w-10 h-10 bg-white border-2 border-orange-400 rounded-lg flex items-center justify-center font-black text-lg text-gray-800 shadow-md"
+                    >
+                      {letter.letter}
+                    </div>
+                  ))}
+                  {selectedLetters.length === 0 && (
+                    <div className="text-white/80 text-sm font-semibold">Select {gameWordLength} letters...</div>
+                  )}
                 </div>
 
-                {/* Prominent Submit and Clear buttons */}
-                <div className="flex gap-4 justify-center">
+                {/* Submit and Clear buttons - Same screen */}
+                <div className="flex gap-3 justify-center">
                   <button 
                     onClick={submitWord} 
                     disabled={selectedLetters.length !== gameWordLength}
-                    className={`px-12 py-6 rounded-2xl font-black text-2xl shadow-2xl transition-all duration-200 transform ${
+                    className={`px-8 py-3 rounded-xl font-black text-lg shadow-lg transition-all duration-200 transform ${
                       selectedLetters.length === gameWordLength
-                        ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white hover:scale-110 hover:shadow-3xl pulse-animation'
+                        ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white hover:scale-105 pulse-animation'
                         : 'bg-gray-400 text-gray-600 cursor-not-allowed'
                     }`}
                   >
-                    ⚔️ SUBMIT WORD
+                    ⚔️ SUBMIT
                   </button>
                   <button 
                     onClick={clearSelection}
                     disabled={selectedLetters.length === 0}
-                    className={`px-8 py-4 rounded-2xl font-black text-lg shadow-xl transition-all duration-200 transform ${
+                    className={`px-6 py-3 rounded-xl font-black text-sm shadow-lg transition-all duration-200 transform ${
                       selectedLetters.length > 0
-                        ? 'bg-gradient-to-r from-red-500 to-pink-500 text-white hover:scale-105 hover:shadow-2xl'
+                        ? 'bg-gradient-to-r from-red-500 to-pink-500 text-white hover:scale-105'
                         : 'bg-gray-400 text-gray-600 cursor-not-allowed'
                     }`}
                   >
-                    🗑️ CLEAR
+                    CLEAR
                   </button>
                 </div>
 
-                {/* Word length indicator */}
-                <div className="text-center">
-                  <div className="bg-white/20 rounded-full px-6 py-2 inline-block">
-                    <span className="text-white font-black text-sm">
-                      {selectedLetters.length}/{gameWordLength} letters selected
-                    </span>
-                  </div>
+                {/* Word length indicator - Compact */}
+                <div className="mt-2">
+                  <span className="text-white/90 text-xs font-semibold">
+                    {selectedLetters.length}/{gameWordLength} letters
+                  </span>
                 </div>
               </div>
+
             </CardContent>
           </Card>
 
