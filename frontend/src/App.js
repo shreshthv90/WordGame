@@ -810,16 +810,16 @@ function App() {
           {/* Word Formation */}
           <Card className="bg-gradient-to-r from-indigo-500 to-purple-600 shadow-2xl border-0 rounded-2xl game-container">
             <CardContent className="p-6">
-              <div className="space-y-4">
+              <div className="space-y-6">
                 <h3 className="text-xl font-black text-white text-center drop-shadow-lg">Your Word</h3>
                 
                 {/* Current word display */}
                 <div className="flex justify-center">
-                  <div className="flex gap-3 min-h-[70px] items-center bg-white/10 rounded-2xl p-4 backdrop-blur-sm">
+                  <div className="flex gap-3 min-h-[80px] items-center bg-white/10 rounded-2xl p-4 backdrop-blur-sm">
                     {selectedLetters.map((letter, index) => (
                       <div
                         key={`${letter.id}-${index}`}
-                        className="w-14 h-14 bg-gradient-to-r from-white to-gray-100 border-3 border-orange-400 rounded-2xl flex items-center justify-center font-black text-2xl text-gray-800 letter-tile shadow-lg transform rotate-1"
+                        className="w-16 h-16 bg-gradient-to-r from-white to-gray-100 border-3 border-orange-400 rounded-2xl flex items-center justify-center font-black text-3xl text-gray-800 letter-tile shadow-lg transform rotate-1"
                       >
                         {letter.letter}
                       </div>
@@ -830,18 +830,18 @@ function App() {
                   </div>
                 </div>
 
-                {/* Submit and Clear buttons */}
+                {/* Prominent Submit and Clear buttons */}
                 <div className="flex gap-4 justify-center">
                   <button 
                     onClick={submitWord} 
                     disabled={selectedLetters.length !== gameWordLength}
-                    className={`px-8 py-4 rounded-2xl font-black text-lg shadow-xl transition-all duration-200 transform ${
+                    className={`px-12 py-6 rounded-2xl font-black text-2xl shadow-2xl transition-all duration-200 transform ${
                       selectedLetters.length === gameWordLength
-                        ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white hover:scale-105 hover:shadow-2xl'
+                        ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white hover:scale-110 hover:shadow-3xl pulse-animation'
                         : 'bg-gray-400 text-gray-600 cursor-not-allowed'
                     }`}
                   >
-                    ⚔️ SUBMIT
+                    ⚔️ SUBMIT WORD
                   </button>
                   <button 
                     onClick={clearSelection}
@@ -854,6 +854,15 @@ function App() {
                   >
                     🗑️ CLEAR
                   </button>
+                </div>
+
+                {/* Word length indicator */}
+                <div className="text-center">
+                  <div className="bg-white/20 rounded-full px-6 py-2 inline-block">
+                    <span className="text-white font-black text-sm">
+                      {selectedLetters.length}/{gameWordLength} letters selected
+                    </span>
+                  </div>
                 </div>
               </div>
             </CardContent>
