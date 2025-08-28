@@ -56,6 +56,14 @@ function App() {
     }, 2000); // Hide after 2 seconds
   };
 
+  const triggerGlobalWordCelebration = (playerName, word, score) => {
+    setGlobalWordData({ playerName, word, score });
+    setShowGlobalWordCelebration(true);
+    setTimeout(() => {
+      setShowGlobalWordCelebration(false);
+    }, 3000); // Show for 3 seconds
+  };
+
   // Authentication Functions
   const handleLogin = () => {
     const redirectUrl = encodeURIComponent(window.location.origin + '/#/profile');
