@@ -725,7 +725,7 @@ function App() {
         
         <div className="relative z-10 max-w-6xl mx-auto space-y-4">
           
-          {/* Success Animation - Positioned on the right side */}
+          {/* Personal Success Animation - Positioned on the right side */}
           {showSuccessAnimation && (
             <div className="fixed top-4 right-4 z-50 animate-bounce">
               <div className="bg-gradient-to-r from-green-400 to-emerald-500 rounded-2xl p-4 shadow-2xl border-3 border-white flex items-center gap-3">
@@ -736,6 +736,33 @@ function App() {
                 />
                 <div className="text-white text-3xl drop-shadow-lg">👍</div>
                 <div className="text-white font-black text-lg drop-shadow-lg">{successWord}!</div>
+              </div>
+            </div>
+          )}
+
+          {/* Global Word Celebration - Center Screen */}
+          {showGlobalWordCelebration && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
+              <div className="bg-gradient-to-r from-purple-500 to-pink-500 rounded-3xl p-8 shadow-3xl border-4 border-white animate-pulse">
+                <div className="text-center space-y-4">
+                  <div className="flex items-center justify-center gap-4">
+                    <img 
+                      src="https://customer-assets.emergentagent.com/job_wordplay-hub-2/artifacts/4qngir0x_nikki%20logo.png" 
+                      alt="Nikki Logo" 
+                      className="w-16 h-16 object-cover rounded-2xl animate-bounce"
+                    />
+                    <div className="text-white">
+                      <div className="text-2xl font-black drop-shadow-lg">{globalWordData.playerName}</div>
+                      <div className="text-sm font-semibold opacity-90">got the word!</div>
+                    </div>
+                  </div>
+                  <div className="text-4xl font-black text-white drop-shadow-lg animate-pulse">
+                    {globalWordData.word}
+                  </div>
+                  <div className="text-xl font-black text-white/90 drop-shadow-lg">
+                    +{globalWordData.score} points! 🎉
+                  </div>
+                </div>
               </div>
             </div>
           )}
