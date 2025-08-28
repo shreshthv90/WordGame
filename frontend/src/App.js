@@ -215,7 +215,14 @@ function App() {
         setLettersOnTable(message.letters);
         setSelectedLetters([]);
         setCurrentWord('');
-        triggerSuccessAnimation(message.word); // Trigger success animation
+        
+        // Check if this was my word (trigger personal success) or someone else's (trigger global celebration)
+        if (message.player === playerName) {
+          triggerSuccessAnimation(message.word); // My word - personal celebration
+        } else {
+          triggerGlobalWordCelebration(message.player, message.word, message.score); // Someone else's word - global celebration
+        }
+        
         addMessage(`${message.player} scored ${message.score} points with "${message.word}"!`);
         break;
         
