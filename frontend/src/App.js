@@ -781,12 +781,12 @@ function App() {
           {/* Letter Grid */}
           <Card className="bg-white/95 backdrop-blur-lg shadow-xl border-0 rounded-2xl game-container">
             <CardContent>
-              <div className="grid grid-cols-6 sm:grid-cols-8 md:grid-cols-10 lg:grid-cols-12 gap-3 min-h-[280px] p-6">
+              <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-4 min-h-[350px] p-8">
                 {lettersOnTable.map((letterObj) => (
                   <button
                     key={letterObj.id}
                     onClick={() => selectLetter(letterObj.id, letterObj.letter)}
-                    className={`aspect-square rounded-2xl font-black text-2xl border-3 transition-all duration-200 transform hover:scale-110 flex items-center justify-center min-h-[70px] shadow-lg letter-tile ${
+                    className={`aspect-square rounded-2xl font-black text-4xl border-4 transition-all duration-200 transform hover:scale-110 flex items-center justify-center min-h-[100px] shadow-xl letter-tile ${
                       selectedLetters.find(l => l.id === letterObj.id)
                         ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white border-white scale-105 shadow-2xl rotate-3'
                         : 'bg-gradient-to-r from-blue-50 to-white border-blue-300 hover:border-orange-400 hover:bg-gradient-to-r hover:from-orange-50 hover:to-amber-50 text-gray-800'
