@@ -202,7 +202,7 @@ function App() {
         setGameState('playing');
         setGameTimerMinutes(message.timer_minutes || 4);
         setTimeRemaining(message.time_remaining || 0);
-        addMessage('Game started! Letters will appear every 4 seconds.');
+        addMessage('Game started! Letters will appear every 2.2 seconds.');
         break;
         
       case 'new_letter':
