@@ -452,15 +452,15 @@ SIX_LETTER_WORDS = {
 ALL_WORDS = THREE_LETTER_WORDS | FOUR_LETTER_WORDS | FIVE_LETTER_WORDS | SIX_LETTER_WORDS
 
 def get_words_by_length(length: int) -> set:
-    """Get all valid words of a specific length"""
+    """Get all words of specified length (including additional words)"""
     if length == 3:
         return THREE_LETTER_WORDS
     elif length == 4:
-        return FOUR_LETTER_WORDS
+        return FOUR_LETTER_WORDS  # This now includes ADDITIONAL_FOUR_LETTER_WORDS
     elif length == 5:
-        return FIVE_LETTER_WORDS
+        return FIVE_LETTER_WORDS  # This now includes ADDITIONAL_FIVE_LETTER_WORDS  
     elif length == 6:
-        return SIX_LETTER_WORDS
+        return SIX_LETTER_WORDS   # This now includes ADDITIONAL_SIX_LETTER_WORDS
     else:
         return set()
 
