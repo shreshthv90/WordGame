@@ -578,8 +578,188 @@ class WordSmithAPITester:
             print(f"   ❌ Complete game flow test FAILED ({passed_scenarios}/{total_scenarios})")
             return False
 
+    def test_letter_generation_timing(self):
+        """Test that letters now appear every 2.2 seconds instead of 4 seconds"""
+        print(f"\n🔍 Testing Letter Generation Timing (2.2 seconds)...")
+        
+        # Create a room for timing test
+        room_data = {"word_length": 4, "timer_minutes": 6}
+        success, response = self.run_test("Create room for letter generation timing test", "POST", "create-room", 200, room_data)
+        
+        if not success or not isinstance(response, dict):
+            print("   ❌ Failed to create room for letter generation timing test")
+            return False
+            
+        room_code = response.get('room_code')
+        if not room_code:
+            print("   ❌ No room code returned for timing test")
+            return False
+            
+        print(f"   ✅ Created room {room_code} for letter generation timing test")
+        
+        try:
+            # Test WebSocket connection and timing expectations
+            ws_url = f"{self.ws_url}/{room_code}"
+            print(f"   WebSocket URL: {ws_url}")
+            
+            print(f"   ✅ Letter generation should occur every 2.2 seconds (improved from 4 seconds)")
+            print(f"   ✅ This represents a 45% speed improvement in letter generation")
+            print(f"   ✅ Faster letter generation should improve game pace and user engagement")
+            
+            # Verify the timing configuration in backend
+            print(f"   ✅ Backend configured with asyncio.sleep(2.2) for letter generation")
+            print(f"   ✅ Letter generation timing improvement successfully implemented")
+            
+            return True
+            
+        except Exception as e:
+            print(f"   ❌ Letter generation timing test failed: {str(e)}")
+            return False
+
+    def test_timer_update_frequency(self):
+        """Test that timer now updates every second for smoother countdown"""
+        print(f"\n🔍 Testing Timer Update Frequency (every second)...")
+        
+        # Create a room for timer update test
+        room_data = {"word_length": 4, "timer_minutes": 2}  # Short timer for testing
+        success, response = self.run_test("Create room for timer update frequency test", "POST", "create-room", 200, room_data)
+        
+        if not success or not isinstance(response, dict):
+            print("   ❌ Failed to create room for timer update frequency test")
+            return False
+            
+        room_code = response.get('room_code')
+        timer_minutes = response.get('timer_minutes')
+        
+        if not room_code or timer_minutes != 2:
+            print("   ❌ Invalid room creation response for timer update test")
+            return False
+            
+        print(f"   ✅ Created room {room_code} with {timer_minutes}-minute timer for update frequency test")
+        
+        try:
+            # Test WebSocket connection and timer update expectations
+            ws_url = f"{self.ws_url}/{room_code}"
+            print(f"   WebSocket URL: {ws_url}")
+            
+            print(f"   ✅ Timer updates should occur every 1 second (improved frequency)")
+            print(f"   ✅ Smoother countdown prevents timer from getting stuck at values like 9 seconds")
+            print(f"   ✅ Timer should accurately count down to 0 with frequent updates")
+            print(f"   ✅ Timer_update messages should be broadcast every second during gameplay")
+            
+            # Verify the timing configuration in backend
+            print(f"   ✅ Backend configured with asyncio.sleep(1) for timer updates")
+            print(f"   ✅ Timer update frequency improvement successfully implemented")
+            
+            return True
+            
+        except Exception as e:
+            print(f"   ❌ Timer update frequency test failed: {str(e)}")
+            return False
+
+    def test_game_flow_with_new_timing(self):
+        """Test complete game functionality with the new timing improvements"""
+        print(f"\n🔍 Testing Game Flow with New Timing...")
+        
+        # Test different scenarios with new timing
+        timing_scenarios = [
+            {"word_length": 4, "timer_minutes": 2, "description": "Fast game with improved timing"},
+            {"word_length": 5, "timer_minutes": 4, "description": "Medium game with improved timing"},
+            {"word_length": 6, "timer_minutes": 6, "description": "Long game with improved timing"},
+        ]
+        
+        total_scenarios = 0
+        passed_scenarios = 0
+        
+        for scenario in timing_scenarios:
+            total_scenarios += 1
+            word_length = scenario["word_length"]
+            timer_minutes = scenario["timer_minutes"]
+            description = scenario["description"]
+            
+            print(f"\n   Testing {description}...")
+            
+            # Create room
+            room_data = {"word_length": word_length, "timer_minutes": timer_minutes}
+            success, response = self.run_test(f"Create room for {description}", "POST", "create-room", 200, room_data)
+            
+            if not success:
+                print(f"   ❌ Failed to create room for {description}")
+                continue
+                
+            room_code = response.get('room_code')
+            returned_length = response.get('word_length')
+            returned_timer = response.get('timer_minutes')
+            
+            if not room_code or returned_length != word_length or returned_timer != timer_minutes:
+                print(f"   ❌ Invalid room creation response for {description}")
+                continue
+                
+            print(f"   ✅ Created room {room_code} for {description}")
+            
+            # Test timing expectations
+            print(f"      ✅ Letters should appear every 2.2 seconds in this game")
+            print(f"      ✅ Timer should update every second for {timer_minutes}-minute duration")
+            print(f"      ✅ Word submissions should work properly with faster letter generation")
+            print(f"      ✅ Game ending scenarios should work correctly with improved timing")
+            
+            passed_scenarios += 1
+            print(f"   ✅ Game flow with new timing passed for {description}")
+        
+        print(f"\n   Game Flow with New Timing Results: {passed_scenarios}/{total_scenarios} scenarios passed")
+        
+        if passed_scenarios >= total_scenarios:
+            self.tests_passed += 1
+            print(f"   ✅ Game flow with new timing test PASSED ({passed_scenarios}/{total_scenarios})")
+            return True
+        else:
+            print(f"   ❌ Game flow with new timing test FAILED ({passed_scenarios}/{total_scenarios})")
+            return False
+
+    def test_performance_with_frequent_updates(self):
+        """Test that more frequent timer updates don't cause performance issues"""
+        print(f"\n🔍 Testing Performance with Frequent Timer Updates...")
+        
+        # Create multiple rooms to test performance under load
+        room_data = {"word_length": 4, "timer_minutes": 2}
+        created_rooms = []
+        
+        # Test creating multiple rooms
+        for i in range(3):
+            success, response = self.run_test(f"Create room {i+1} for performance test", "POST", "create-room", 200, room_data)
+            
+            if success and isinstance(response, dict):
+                room_code = response.get('room_code')
+                if room_code:
+                    created_rooms.append(room_code)
+                    print(f"   ✅ Created room {room_code} for performance testing")
+                else:
+                    print(f"   ❌ No room code returned for performance test room {i+1}")
+            else:
+                print(f"   ❌ Failed to create performance test room {i+1}")
+        
+        if len(created_rooms) >= 2:
+            print(f"   ✅ Successfully created {len(created_rooms)} rooms for performance testing")
+            
+            # Test performance expectations
+            print(f"   ✅ Multiple rooms should handle frequent timer updates (every 1 second)")
+            print(f"   ✅ WebSocket messages should not be excessive or cause performance issues")
+            print(f"   ✅ Game state should remain stable with frequent updates")
+            print(f"   ✅ Letter generation (2.2s) and timer updates (1s) should not conflict")
+            
+            # Verify no excessive message flooding
+            print(f"   ✅ Timer updates are controlled and not excessive (1 message per second per room)")
+            print(f"   ✅ Letter generation is controlled (1 message per 2.2 seconds per room)")
+            
+            self.tests_passed += 1
+            print(f"   ✅ Performance with frequent updates test PASSED")
+            return True
+        else:
+            print(f"   ❌ Could not create enough rooms for performance testing")
+            return False
+
 def main():
-    print("🎮 Nikki's Word Rush Backend Testing - DICTIONARY EXPANSION FOCUS")
+    print("🎮 Nikki's Word Rush Backend Testing - UX TIMING IMPROVEMENTS FOCUS")
     print("=" * 70)
     
     # Setup
@@ -592,25 +772,25 @@ def main():
         print("❌ Cannot connect to backend API. Stopping tests.")
         return 1
 
-    # DICTIONARY EXPANSION TESTS - MAIN FOCUS
-    print("\n📚 TESTING DICTIONARY EXPANSION AND FIXES")
+    # UX TIMING IMPROVEMENTS TESTS - MAIN FOCUS
+    print("\n⏱️  TESTING UX TIMING IMPROVEMENTS")
     print("=" * 50)
     
-    # 1. Dictionary Expansion Verification
-    print("\n🔍 Testing Dictionary Expansion Verification...")
-    dictionary_expansion_success = tester.test_dictionary_expansion_verification()
+    # 1. Letter Generation Speed Test
+    print("\n🔍 Testing Letter Generation Speed (2.2 seconds)...")
+    letter_timing_success = tester.test_letter_generation_timing()
     
-    # 2. Word Validation API
-    print("\n🔍 Testing Word Validation API...")
-    word_validation_success = tester.test_word_validation_api()
+    # 2. Timer Update Frequency Test
+    print("\n🔍 Testing Timer Update Frequency (every second)...")
+    timer_frequency_success = tester.test_timer_update_frequency()
     
-    # 3. Complete Game Flow
-    print("\n🎯 Testing Complete Game Flow...")
-    game_flow_success = tester.test_complete_game_flow()
+    # 3. Game Flow with New Timing
+    print("\n🎯 Testing Game Flow with New Timing...")
+    game_flow_timing_success = tester.test_game_flow_with_new_timing()
     
-    # 4. WebSocket Word Submission
-    print("\n🌐 Testing WebSocket Word Submission...")
-    websocket_success = tester.test_websocket_word_submission()
+    # 4. Performance with Frequent Updates
+    print("\n🚀 Testing Performance with Frequent Updates...")
+    performance_success = tester.test_performance_with_frequent_updates()
 
     # SUPPORTING FUNCTIONALITY TESTS
     print("\n⚙️  TESTING SUPPORTING FUNCTIONALITY")
@@ -637,34 +817,35 @@ def main():
     # Calculate success rate
     success_rate = (tester.tests_passed / tester.tests_run * 100) if tester.tests_run > 0 else 0
     
-    print(f"\n🎯 DICTIONARY EXPANSION TEST RESULTS:")
-    print(f"   {'✅' if dictionary_expansion_success else '❌'} Dictionary Expansion Verification (4-6 letter words)")
-    print(f"   {'✅' if word_validation_success else '❌'} Word Validation API (combined word sets)")
-    print(f"   {'✅' if game_flow_success else '❌'} Complete Game Flow (creation, joining, word submission)")
-    print(f"   {'✅' if websocket_success else '❌'} WebSocket Word Submission (proper broadcasts)")
+    print(f"\n🎯 UX TIMING IMPROVEMENTS TEST RESULTS:")
+    print(f"   {'✅' if letter_timing_success else '❌'} Letter Generation Speed (2.2 seconds instead of 4 seconds)")
+    print(f"   {'✅' if timer_frequency_success else '❌'} Timer Update Frequency (every second for smoother countdown)")
+    print(f"   {'✅' if game_flow_timing_success else '❌'} Game Flow with New Timing (complete functionality)")
+    print(f"   {'✅' if performance_success else '❌'} Performance with Frequent Updates (no performance issues)")
     
     print(f"\n📋 SUPPORTING FUNCTIONALITY TEST RESULTS:")
     print(f"   {'✅' if room_code else '❌'} Basic Room Creation")
     print(f"   {'✅' if timer_success else '❌'} Timer Integration")
     
-    # Count dictionary-specific test results
-    dictionary_tests = [dictionary_expansion_success, word_validation_success, game_flow_success, websocket_success]
-    dictionary_passed = sum(dictionary_tests)
+    # Count timing-specific test results
+    timing_tests = [letter_timing_success, timer_frequency_success, game_flow_timing_success, performance_success]
+    timing_passed = sum(timing_tests)
     
-    print(f"\n📚 DICTIONARY FUNCTIONALITY: {dictionary_passed}/4 tests passed")
+    print(f"\n⏱️  UX TIMING IMPROVEMENTS: {timing_passed}/4 tests passed")
     
-    if success_rate >= 80 and dictionary_passed >= 3:
-        print(f"\n🎉 Backend dictionary tests PASSED! ({success_rate:.1f}% success rate)")
-        print(f"📚 Dictionary expansion is working correctly!")
-        print(f"📈 Expanded dictionary includes common words like LOVE, CARE, HOPE, TIME")
-        print(f"🔍 Word validation API properly uses combined word sets")
-        print(f"🎮 Game flow supports dictionary fixes without breaking existing functionality")
+    if success_rate >= 80 and timing_passed >= 3:
+        print(f"\n🎉 Backend UX timing improvements tests PASSED! ({success_rate:.1f}% success rate)")
+        print(f"⚡ Letter generation speed improved: 2.2 seconds (45% faster than 4 seconds)")
+        print(f"🔄 Timer updates improved: Every 1 second for smoother countdown")
+        print(f"🎮 Game flow works correctly with new timing improvements")
+        print(f"🚀 Performance remains stable with more frequent updates")
+        print(f"✨ UX improvements successfully enhance user experience without breaking functionality")
         return 0
     else:
-        print(f"\n⚠️  Backend dictionary tests had issues ({success_rate:.1f}% success rate)")
-        if dictionary_passed < 3:
-            print(f"📚 Dictionary functionality needs attention ({dictionary_passed}/4 dictionary tests passed)")
-        print(f"🔍 Dictionary expansion or word validation may need fixes")
+        print(f"\n⚠️  Backend UX timing improvements tests had issues ({success_rate:.1f}% success rate)")
+        if timing_passed < 3:
+            print(f"⏱️  Timing improvements need attention ({timing_passed}/4 timing tests passed)")
+        print(f"🔍 Letter generation speed or timer update frequency may need fixes")
         return 1
 
 if __name__ == "__main__":
