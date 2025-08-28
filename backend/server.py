@@ -659,7 +659,7 @@ async def letter_generation_timer(room_code: str):
             }, room_code)
             break
             
-        await asyncio.sleep(4)
+        await asyncio.sleep(2.2)  # Generate letter every 2.2 seconds
 
 async def game_timer_countdown(room_code: str):
     """Countdown timer for the game duration"""
