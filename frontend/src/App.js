@@ -888,18 +888,16 @@ function App() {
             </CardContent>
           </Card>
 
-          {/* Messages and Rules */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Messages and Rules - Compact bottom sections */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
             {/* Messages */}
             {messages.length > 0 && (
-              <Card className="bg-white/95 backdrop-blur-sm shadow-lg border-0">
-                <CardHeader>
-                  <CardTitle className="text-lg">Game Feed</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2 max-h-40 overflow-y-auto">
-                    {messages.slice(-5).map((msg, index) => (
-                      <p key={index} className="text-sm p-2 bg-gray-50 rounded">
+              <Card className="bg-white/95 backdrop-blur-sm shadow-lg border-0 rounded-xl game-container">
+                <CardContent className="p-3">
+                  <h3 className="font-black text-gray-800 text-sm mb-2">Game Feed</h3>
+                  <div className="space-y-1 max-h-24 overflow-y-auto">
+                    {messages.slice(-3).map((msg, index) => (
+                      <p key={index} className="text-xs p-1 bg-gray-50 rounded text-gray-700">
                         {msg.text}
                       </p>
                     ))}
@@ -908,32 +906,30 @@ function App() {
               </Card>
             )}
 
-            {/* Rules Section for Playing */}
-            <Card className="bg-white/95 backdrop-blur-sm shadow-lg border-0">
-              <CardHeader>
-                <CardTitle className="text-lg flex items-center justify-between">
-                  Letter Points
+            {/* Rules Section - Compact */}
+            <Card className="bg-white/95 backdrop-blur-sm shadow-lg border-0 rounded-xl game-container">
+              <CardContent className="p-3">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="font-black text-gray-800 text-sm">Letter Points</h3>
                   <Button
                     variant="ghost"
                     onClick={() => setShowRules(!showRules)}
-                    className="text-sm px-2 py-1"
+                    className="text-xs px-1 py-0 h-auto"
                   >
                     {showRules ? '▼' : '▶'}
                   </Button>
-                </CardTitle>
-              </CardHeader>
-              {showRules && (
-                <CardContent>
-                  <div className="grid grid-cols-2 gap-2 text-xs">
-                    {Object.entries(letterScores).map(([points, letters]) => (
-                      <div key={points} className="flex items-center justify-between">
-                        <span className="font-medium text-gray-700">{points}pt:</span>
-                        <span className="font-mono text-gray-600 text-right">{letters.join(' ')}</span>
+                </div>
+                {showRules && (
+                  <div className="grid grid-cols-2 gap-1 text-xs">
+                    {Object.entries(letterScores).slice(0,4).map(([points, letters]) => (
+                      <div key={points} className="flex justify-between">
+                        <span className="font-bold text-gray-700">{points}pt:</span>
+                        <span className="font-mono text-gray-600 text-right">{letters.slice(0,3).join('')}</span>
                       </div>
                     ))}
                   </div>
-                </CardContent>
-              )}
+                )}
+              </CardContent>
             </Card>
           </div>
         </div>
