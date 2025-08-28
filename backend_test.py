@@ -280,19 +280,23 @@ class WordSmithAPITester:
             print("   ❌ Failed to create room with default parameters")
             return False
 
-    def test_dictionary_validation(self):
-        """Test dictionary functionality by creating rooms and testing word validation through game flow"""
-        print(f"\n🔍 Testing Dictionary Validation...")
+    def test_dictionary_expansion_verification(self):
+        """Test comprehensive dictionary expansion with focus on 4-6 letter words from expanded sets"""
+        print(f"\n🔍 Testing Dictionary Expansion Verification...")
         
-        # Test words that should be valid in expanded dictionary
+        # Test words that should be valid in expanded dictionary - focusing on review request
         test_cases = [
-            # 3-letter words
-            {"length": 3, "valid_words": ["THE", "AND", "CAT", "DOG", "RUN"], 
-             "invalid_words": ["XYZ", "QQQ"]},
+            # 4-letter words - including common words that should be in expanded dictionary
+            {"length": 4, "valid_words": ["LOVE", "CARE", "HOPE", "TIME", "ABLE", "ACID", "AGED", "AIDE", "AIMS", "ALLY", "AMID", "ANTE", "ARAB", "AREA", "ARMY", "ARTS", "ATOM", "AUTO", "BABY", "BACK", "BAIL", "BAIT", "BALL", "BAND", "BANK", "BARE", "BARK", "BASE", "BATH", "BEAM", "BEAR", "BEAT", "BEEF", "BEEN", "BEER", "BELL", "BELT", "BEND", "BEST", "BIKE", "BILL", "BIND", "BIRD", "BITE", "BLOW", "BLUE", "BOAT", "BODY", "BOLD", "BOMB", "BOND", "BONE", "BOOK", "BOOM", "BOOT", "BORE", "BORN", "BOSS", "BOTH", "BOWL", "BOYS"], 
+             "invalid_words": ["XXXX", "QQQQ", "ZZZZ"]},
             
-            # 4-letter words - including some that should be in expanded dictionary
-            {"length": 4, "valid_words": ["WORD", "GAME", "PLAY", "LOVE", "HOPE"], 
-             "invalid_words": ["XXXX", "QQQQ"]},
+            # 5-letter words from additional set
+            {"length": 5, "valid_words": ["ABOUT", "ABOVE", "ABUSE", "ACTOR", "ACUTE", "ADMIT", "ADOPT", "ADULT", "AFTER", "AGAIN", "AGENT", "AGREE", "AHEAD", "ALARM", "ALBUM", "ALERT", "ALIEN", "ALIGN", "ALIKE", "ALIVE", "ALLOW", "ALONE", "ALONG", "ALTER", "ANGEL", "ANGER", "ANGLE", "ANGRY", "APART", "APPLE", "APPLY", "ARENA", "ARGUE", "ARISE", "ARRAY", "ARROW", "ASIDE", "ASSET", "AVOID", "AWAKE", "AWARD", "AWARE", "BADLY", "BAKER", "BASIC", "BEACH", "BEGAN", "BEGIN", "BEING", "BELLY", "BELOW", "BENCH", "BILLY", "BIRTH", "BLACK", "BLAME", "BLANK", "BLAST", "BLIND", "BLOCK", "BLOOD", "BOARD", "BOAST", "BOBBY", "BOUND", "BRAIN", "BRAND", "BRASS", "BRAVE", "BREAD", "BREAK", "BREED", "BRIEF", "BRING", "BROAD", "BROKE", "BROWN", "BUILD", "BUILT", "BUYER"], 
+             "invalid_words": ["XXXXX", "QQQQQ", "ZZZZZ"]},
+            
+            # 6-letter words from additional set
+            {"length": 6, "valid_words": ["ACCEPT", "ACCESS", "ACCORD", "ACROSS", "ACTION", "ACTIVE", "ACTUAL", "ADJUST", "ADVICE", "ADVISE", "AFFECT", "AFFORD", "AFRAID", "AFRICA", "AGENCY", "AGENDA", "AGREED", "ALMOST", "ALWAYS", "AMOUNT", "ANIMAL", "ANNUAL", "ANSWER", "ANYONE", "ANYWAY", "APPEAR", "AROUND", "ARRIVE", "ARTIST", "ASPECT", "ASSUME", "ATTACK", "ATTEND", "AUGUST", "AUTHOR", "AVENUE", "BANNED", "BATTLE", "BEAUTY", "BECAME", "BECOME", "BEFORE", "BEHALF", "BEHAVE", "BEHIND", "BELIEF", "BELONG", "BESIDE", "BETTER", "BEYOND", "BISHOP", "BLOODY", "BORDER", "BOTTLE", "BOTTOM", "BOUGHT", "BRANCH", "BREATH", "BRIDGE", "BRIGHT", "BRINGS", "BROKEN", "BUDGET", "BURDEN", "BUREAU", "BUTTON"], 
+             "invalid_words": ["XXXXXX", "QQQQQQ", "ZZZZZZ"]},
         ]
         
         total_word_tests = 0
@@ -300,11 +304,11 @@ class WordSmithAPITester:
         
         for test_case in test_cases:
             length = test_case["length"]
-            print(f"\n   Testing {length}-letter words...")
+            print(f"\n   Testing {length}-letter words from expanded dictionary...")
             
             # Create a room with specific word length and timer
             room_data = {"word_length": length, "timer_minutes": 4}
-            success, response = self.run_test(f"Create {length}-letter room with timer", "POST", "create-room", 200, room_data)
+            success, response = self.run_test(f"Create {length}-letter room for expanded dictionary test", "POST", "create-room", 200, room_data)
             
             if not success:
                 print(f"   ❌ Failed to create room for {length}-letter words")
@@ -315,34 +319,88 @@ class WordSmithAPITester:
                 print(f"   ❌ No room code returned for {length}-letter words")
                 continue
                 
-            print(f"   ✅ Created room {room_code} for {length}-letter words with timer")
+            print(f"   ✅ Created room {room_code} for {length}-letter expanded dictionary test")
             
-            # Test valid words
+            # Test valid words from expanded dictionary
             for word in test_case["valid_words"]:
                 total_word_tests += 1
-                if self.test_word_in_dictionary(word, length):
+                if self.test_word_in_expanded_dictionary(word, length):
                     passed_word_tests += 1
-                    print(f"      ✅ '{word}' correctly validated as valid {length}-letter word")
+                    print(f"      ✅ '{word}' correctly validated as valid {length}-letter expanded word")
                 else:
-                    print(f"      ❌ '{word}' incorrectly rejected as {length}-letter word")
+                    print(f"      ❌ '{word}' incorrectly rejected as {length}-letter expanded word")
             
             # Test invalid words
             for word in test_case["invalid_words"]:
                 total_word_tests += 1
-                if not self.test_word_in_dictionary(word, length):
+                if not self.test_word_in_expanded_dictionary(word, length):
                     passed_word_tests += 1
                     print(f"      ✅ '{word}' correctly rejected as invalid {length}-letter word")
                 else:
                     print(f"      ❌ '{word}' incorrectly accepted as {length}-letter word")
         
-        print(f"\n   Dictionary Test Results: {passed_word_tests}/{total_word_tests} word validations passed")
+        print(f"\n   Dictionary Expansion Test Results: {passed_word_tests}/{total_word_tests} word validations passed")
         
-        if passed_word_tests >= total_word_tests * 0.8:  # 80% pass rate
+        if passed_word_tests >= total_word_tests * 0.9:  # 90% pass rate for expanded dictionary
             self.tests_passed += 1
-            print(f"   ✅ Dictionary validation test PASSED ({passed_word_tests}/{total_word_tests})")
+            print(f"   ✅ Dictionary expansion validation test PASSED ({passed_word_tests}/{total_word_tests})")
             return True
         else:
-            print(f"   ❌ Dictionary validation test FAILED ({passed_word_tests}/{total_word_tests})")
+            print(f"   ❌ Dictionary expansion validation test FAILED ({passed_word_tests}/{total_word_tests})")
+            return False
+
+    def test_word_validation_api(self):
+        """Test that word validation API properly uses combined word sets"""
+        print(f"\n🔍 Testing Word Validation API...")
+        
+        # Test specific words that should be in expanded dictionary but not base sets
+        expanded_words_test = [
+            {"word": "LOVE", "length": 4, "should_be_valid": True},
+            {"word": "CARE", "length": 4, "should_be_valid": True},
+            {"word": "HOPE", "length": 4, "should_be_valid": True},
+            {"word": "TIME", "length": 4, "should_be_valid": True},
+            {"word": "ABLE", "length": 4, "should_be_valid": True},
+            {"word": "ACID", "length": 4, "should_be_valid": True},
+            {"word": "ABOUT", "length": 5, "should_be_valid": True},
+            {"word": "ABOVE", "length": 5, "should_be_valid": True},
+            {"word": "ACTOR", "length": 5, "should_be_valid": True},
+            {"word": "ACCEPT", "length": 6, "should_be_valid": True},
+            {"word": "ACCESS", "length": 6, "should_be_valid": True},
+            {"word": "ACTION", "length": 6, "should_be_valid": True},
+            {"word": "XXXX", "length": 4, "should_be_valid": False},
+            {"word": "XXXXX", "length": 5, "should_be_valid": False},
+            {"word": "XXXXXX", "length": 6, "should_be_valid": False},
+        ]
+        
+        total_tests = 0
+        passed_tests = 0
+        
+        for test in expanded_words_test:
+            word = test["word"]
+            length = test["length"]
+            should_be_valid = test["should_be_valid"]
+            
+            total_tests += 1
+            is_valid = self.test_word_in_expanded_dictionary(word, length)
+            
+            if is_valid == should_be_valid:
+                passed_tests += 1
+                status = "✅" if should_be_valid else "✅"
+                print(f"      {status} '{word}' ({length}-letter) correctly {'accepted' if should_be_valid else 'rejected'}")
+            else:
+                status = "❌"
+                expected = "accepted" if should_be_valid else "rejected"
+                actual = "accepted" if is_valid else "rejected"
+                print(f"      {status} '{word}' ({length}-letter) should be {expected} but was {actual}")
+        
+        print(f"\n   Word Validation API Test Results: {passed_tests}/{total_tests} validations passed")
+        
+        if passed_tests >= total_tests * 0.9:  # 90% pass rate
+            self.tests_passed += 1
+            print(f"   ✅ Word validation API test PASSED ({passed_tests}/{total_tests})")
+            return True
+        else:
+            print(f"   ❌ Word validation API test FAILED ({passed_tests}/{total_tests})")
             return False
 
     def test_word_in_dictionary(self, word, expected_length):
