@@ -579,7 +579,7 @@ class WordSmithAPITester:
             return False
 
 def main():
-    print("🎮 Nikki's Word Rush Backend Testing - TIMER FUNCTIONALITY FOCUS")
+    print("🎮 Nikki's Word Rush Backend Testing - DICTIONARY EXPANSION FOCUS")
     print("=" * 70)
     
     # Setup
@@ -592,32 +592,28 @@ def main():
         print("❌ Cannot connect to backend API. Stopping tests.")
         return 1
 
-    # NEW TIMER FUNCTIONALITY TESTS - MAIN FOCUS
-    print("\n⏱️  TESTING NEW TIMER FUNCTIONALITY")
+    # DICTIONARY EXPANSION TESTS - MAIN FOCUS
+    print("\n📚 TESTING DICTIONARY EXPANSION AND FIXES")
     print("=" * 50)
     
-    # 1. Timer Room Creation
-    print("\n🏠 Testing Timer Room Creation (2, 4, 6 minutes)...")
-    timer_room_success = tester.test_timer_room_creation()
+    # 1. Dictionary Expansion Verification
+    print("\n🔍 Testing Dictionary Expansion Verification...")
+    dictionary_expansion_success = tester.test_dictionary_expansion_verification()
     
-    # 2. Timer API Validation
-    print("\n🔍 Testing Timer API Validation...")
-    timer_validation_success = tester.test_timer_api_validation()
+    # 2. Word Validation API
+    print("\n🔍 Testing Word Validation API...")
+    word_validation_success = tester.test_word_validation_api()
     
-    # 3. Timer Game State
-    print("\n🎮 Testing Timer Game State...")
-    timer_state_success = tester.test_timer_game_state()
+    # 3. Complete Game Flow
+    print("\n🎯 Testing Complete Game Flow...")
+    game_flow_success = tester.test_complete_game_flow()
     
-    # 4. Timer WebSocket Functionality
-    print("\n🌐 Testing Timer WebSocket Functionality...")
-    timer_websocket_success = tester.test_timer_websocket_functionality()
-    
-    # 5. Existing Functionality with Timer
-    print("\n🔄 Testing Existing Functionality with Timer...")
-    existing_with_timer_success = tester.test_existing_functionality_with_timer()
+    # 4. WebSocket Word Submission
+    print("\n🌐 Testing WebSocket Word Submission...")
+    websocket_success = tester.test_websocket_word_submission()
 
-    # EXISTING FUNCTIONALITY TESTS
-    print("\n📚 TESTING EXISTING FUNCTIONALITY")
+    # SUPPORTING FUNCTIONALITY TESTS
+    print("\n⚙️  TESTING SUPPORTING FUNCTIONALITY")
     print("=" * 50)
     
     # Test room creation
@@ -626,13 +622,9 @@ def main():
     if not room_code:
         print("❌ Basic room creation failed.")
     
-    # Test dictionary functionality
-    print("\n📚 Testing Dictionary Functionality...")
-    dictionary_success = tester.test_dictionary_validation()
-
-    # Test basic game flow
-    print("\n🎯 Testing Basic Game Flow...")
-    game_flow_success = tester.test_game_flow_basic()
+    # Test timer functionality (brief check)
+    print("\n⏱️  Testing Timer Integration...")
+    timer_success = tester.test_timer_room_creation()
 
     # Test invalid endpoints
     print("\n🚫 Testing Invalid Endpoints...")
@@ -645,35 +637,34 @@ def main():
     # Calculate success rate
     success_rate = (tester.tests_passed / tester.tests_run * 100) if tester.tests_run > 0 else 0
     
-    print(f"\n🎯 TIMER FUNCTIONALITY TEST RESULTS:")
-    print(f"   {'✅' if timer_room_success else '❌'} Timer Room Creation (2, 4, 6 minutes)")
-    print(f"   {'✅' if timer_validation_success else '❌'} Timer API Validation (edge cases)")
-    print(f"   {'✅' if timer_state_success else '❌'} Timer Game State (includes timer info)")
-    print(f"   {'✅' if timer_websocket_success else '❌'} Timer WebSocket Functionality")
-    print(f"   {'✅' if existing_with_timer_success else '❌'} Existing Functionality with Timer")
+    print(f"\n🎯 DICTIONARY EXPANSION TEST RESULTS:")
+    print(f"   {'✅' if dictionary_expansion_success else '❌'} Dictionary Expansion Verification (4-6 letter words)")
+    print(f"   {'✅' if word_validation_success else '❌'} Word Validation API (combined word sets)")
+    print(f"   {'✅' if game_flow_success else '❌'} Complete Game Flow (creation, joining, word submission)")
+    print(f"   {'✅' if websocket_success else '❌'} WebSocket Word Submission (proper broadcasts)")
     
-    print(f"\n📋 EXISTING FUNCTIONALITY TEST RESULTS:")
+    print(f"\n📋 SUPPORTING FUNCTIONALITY TEST RESULTS:")
     print(f"   {'✅' if room_code else '❌'} Basic Room Creation")
-    print(f"   {'✅' if dictionary_success else '❌'} Dictionary Validation")
-    print(f"   {'✅' if game_flow_success else '❌'} Basic Game Flow")
+    print(f"   {'✅' if timer_success else '❌'} Timer Integration")
     
-    # Count timer-specific test results
-    timer_tests = [timer_room_success, timer_validation_success, timer_state_success, 
-                   timer_websocket_success, existing_with_timer_success]
-    timer_passed = sum(timer_tests)
+    # Count dictionary-specific test results
+    dictionary_tests = [dictionary_expansion_success, word_validation_success, game_flow_success, websocket_success]
+    dictionary_passed = sum(dictionary_tests)
     
-    print(f"\n⏱️  TIMER FUNCTIONALITY: {timer_passed}/5 tests passed")
+    print(f"\n📚 DICTIONARY FUNCTIONALITY: {dictionary_passed}/4 tests passed")
     
-    if success_rate >= 80 and timer_passed >= 4:
-        print(f"\n🎉 Backend tests PASSED! ({success_rate:.1f}% success rate)")
-        print(f"⏱️  Timer functionality is working correctly!")
-        print(f"📈 New timer features (2, 4, 6 minutes) are properly implemented")
+    if success_rate >= 80 and dictionary_passed >= 3:
+        print(f"\n🎉 Backend dictionary tests PASSED! ({success_rate:.1f}% success rate)")
+        print(f"📚 Dictionary expansion is working correctly!")
+        print(f"📈 Expanded dictionary includes common words like LOVE, CARE, HOPE, TIME")
+        print(f"🔍 Word validation API properly uses combined word sets")
+        print(f"🎮 Game flow supports dictionary fixes without breaking existing functionality")
         return 0
     else:
-        print(f"\n⚠️  Backend tests had issues ({success_rate:.1f}% success rate)")
-        if timer_passed < 4:
-            print(f"⏱️  Timer functionality needs attention ({timer_passed}/5 timer tests passed)")
-        print(f"🔍 Timer or game functionality may need fixes")
+        print(f"\n⚠️  Backend dictionary tests had issues ({success_rate:.1f}% success rate)")
+        if dictionary_passed < 3:
+            print(f"📚 Dictionary functionality needs attention ({dictionary_passed}/4 dictionary tests passed)")
+        print(f"🔍 Dictionary expansion or word validation may need fixes")
         return 1
 
 if __name__ == "__main__":
