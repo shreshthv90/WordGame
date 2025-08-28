@@ -670,7 +670,7 @@ async def game_timer_countdown(room_code: str):
     while game.game_started and not game.should_end_game():
         time_remaining = game.get_time_remaining()
         
-        # Broadcast time remaining every 10 seconds
+        # Broadcast time remaining every second for better user experience
         await manager.broadcast_to_room({
             "type": "timer_update",
             "time_remaining": time_remaining
@@ -694,7 +694,7 @@ async def game_timer_countdown(room_code: str):
             }, room_code)
             break
             
-        await asyncio.sleep(10)  # Update every 10 seconds
+        await asyncio.sleep(1)  # Update every second for smooth countdown
 
 
 # Include the router
