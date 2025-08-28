@@ -405,11 +405,7 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Authentication API endpoints"
-    - "Database collections for authentication"
-    - "ELO rating system"
-    - "Game integration with authentication"
-    - "Session management"
+    - "UX timing improvements"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
