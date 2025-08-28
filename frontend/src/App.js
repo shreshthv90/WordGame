@@ -26,6 +26,8 @@ function App() {
   const [showRules, setShowRules] = useState(false); // Show/hide rules section
   const [showSuccessAnimation, setShowSuccessAnimation] = useState(false); // Success animation state
   const [successWord, setSuccessWord] = useState(''); // Word that was accepted
+  const [showGlobalWordCelebration, setShowGlobalWordCelebration] = useState(false); // Global word celebration
+  const [globalWordData, setGlobalWordData] = useState({}); // Data for global celebration
   const [players, setPlayers] = useState([]);
   const [lettersOnTable, setLettersOnTable] = useState([]);
   const [selectedLetters, setSelectedLetters] = useState([]);
